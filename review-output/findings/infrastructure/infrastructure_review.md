@@ -66,7 +66,7 @@
 ### Go Module Dependencies
 **go.mod declares:**
 ```
-module github.com/usetheodev/theo-forge
+module github.com/getloopscale/argo-workflows-go
 go 1.25.0
 require sigs.k8s.io/yaml v1.6.0          // direct
 require (
@@ -106,7 +106,7 @@ require (
 4. **`golangci-lint` pinned to `latest`** — lint behavior may silently change between CI runs.
 
 ### Module Path
-The module path is `github.com/usetheodev/theo-forge`. Since the project is at v0.x (pre-v1), no `/vN` suffix is required. This is correct.
+The module path is `github.com/getloopscale/argo-workflows-go`. Since the project is at v0.x (pre-v1), no `/vN` suffix is required. This is correct.
 
 ---
 

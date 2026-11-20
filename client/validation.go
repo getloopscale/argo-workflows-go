@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"regexp"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // RFC1123 DNS subdomain (k8s namespace + most resource names): lowercase

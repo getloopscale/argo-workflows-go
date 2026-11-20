@@ -20,7 +20,7 @@ updates:
       - "github-actions"
     # Disable auto-merge on .github/ changes (security boundary).
     reviewers:
-      - "usetheodev"
+      - "getloopscale"
 
   - package-ecosystem: gomod
     directory: "/"

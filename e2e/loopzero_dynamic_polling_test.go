@@ -8,12 +8,12 @@ import (
 	"testing"
 	"time"
 
-	forge "github.com/usetheodev/theo-forge"
-	"github.com/usetheodev/theo-forge/model"
+	forge "github.com/getloopscale/argo-workflows-go"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
-// TestTheoShape_DynamicClientPolling exercises the EXACT polling path
-// Theo's reconcile loop uses (api/internal/argo/workflow_submitter.go
+// TestLoopZeroShape_DynamicClientPolling exercises the EXACT polling path
+// LoopZero's reconcile loop uses (api/internal/argo/workflow_submitter.go
 // GetStatus, ~L230):
 //
 //	wf, _ := dynamic.Resource(workflowGVR).Namespace(ns).Get(...)
@@ -27,11 +27,11 @@ import (
 // tree). Instead, we drive a `kubectl get -o json` through the shim,
 // unmarshal to map[string]interface{} (which is EXACTLY what the
 // dynamic client returns: `unstructured.Unstructured.Object`), and
-// pass it through the same forge helpers Theo calls.
+// pass it through the same forge helpers LoopZero calls.
 //
 // If ParseWorkflowStatusFromUnstructured stops parsing the controller's
 // real output OR AllPodNodesExitedZero changes shape, this catches it.
-func TestTheoShape_DynamicClientPolling(t *testing.T) {
+func TestLoopZeroShape_DynamicClientPolling(t *testing.T) {
 	wfName := uniqueName("dyn-poll")
 	cleanupWorkflow(t, wfName)
 
@@ -56,7 +56,7 @@ func TestTheoShape_DynamicClientPolling(t *testing.T) {
 		t.Fatalf("Create: %v", err)
 	}
 
-	// --- Phase 1: poll via the SHIM (mirrors Theo's reconcile loop) ---
+	// --- Phase 1: poll via the SHIM (mirrors LoopZero's reconcile loop) ---
 	//
 	// Wait until the workflow reaches a terminal phase using ONLY the
 	// dynamic-client style helpers from forge. No REST client involved
@@ -88,16 +88,16 @@ func TestTheoShape_DynamicClientPolling(t *testing.T) {
 		t.Fatalf("polling never produced a non-nil status\n%s", dumpWorkflow(t, wfName))
 	}
 
-	// --- Phase 2: assert the parse extracted the fields Theo relies on ---
+	// --- Phase 2: assert the parse extracted the fields LoopZero relies on ---
 	if lastStatus.Phase != model.WorkflowSucceeded {
 		t.Fatalf("expected Succeeded phase, got %q\n%s",
 			lastStatus.Phase, dumpWorkflow(t, wfName))
 	}
 	if lastStatus.FinishedAt == "" {
-		t.Errorf("FinishedAt empty — Theo's `status.FinishedAt` will be missing")
+		t.Errorf("FinishedAt empty — LoopZero's `status.FinishedAt` will be missing")
 	}
 	if len(lastStatus.Nodes) == 0 {
-		t.Errorf("Nodes empty — Theo's extractStepOutputs will return nothing")
+		t.Errorf("Nodes empty — LoopZero's extractStepOutputs will return nothing")
 	}
 
 	// --- Phase 3: AllPodNodesExitedZero on a successful workflow ---
@@ -107,8 +107,8 @@ func TestTheoShape_DynamicClientPolling(t *testing.T) {
 	}
 }
 
-// TestTheoShape_AllPodNodesExitedZero_OverrideOnFailedWorkflow targets
-// the sidecar false-failure defense in Theo (workflow_submitter.go ~L258):
+// TestLoopZeroShape_AllPodNodesExitedZero_OverrideOnFailedWorkflow targets
+// the sidecar false-failure defense in LoopZero (workflow_submitter.go ~L258):
 //
 //	if phase == "Failed" && forge.AllPodNodesExitedZero(status) {
 //	    phase = "Succeeded"
@@ -120,7 +120,7 @@ func TestTheoShape_DynamicClientPolling(t *testing.T) {
 // running inside the e2e package because the helper signature mirrors
 // the dynamic-client path and we want it co-located with the live
 // polling test for traceability.
-func TestTheoShape_AllPodNodesExitedZero_OverrideOnFailedWorkflow(t *testing.T) {
+func TestLoopZeroShape_AllPodNodesExitedZero_OverrideOnFailedWorkflow(t *testing.T) {
 	// Synthetic Failed workflow status: main container exited 0,
 	// some sidecar exited non-zero, Argo reported "Failed" overall.
 	statusJSON := `{
@@ -152,6 +152,6 @@ func TestTheoShape_AllPodNodesExitedZero_OverrideOnFailedWorkflow(t *testing.T) 
 		t.Errorf("Phase parse lost: got %q", status.Phase)
 	}
 	if !forge.AllPodNodesExitedZero(status) {
-		t.Errorf("AllPodNodesExitedZero should be true when every Pod node exited 0; this is the override Theo relies on")
+		t.Errorf("AllPodNodesExitedZero should be true when every Pod node exited 0; this is the override LoopZero relies on")
 	}
 }

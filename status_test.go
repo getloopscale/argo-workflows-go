@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 func TestParseWorkflowStatusFromUnstructured_Succeeded(t *testing.T) {

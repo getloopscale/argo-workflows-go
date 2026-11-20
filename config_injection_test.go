@@ -4,8 +4,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/config"
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/config"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // T3.1 regression tests (arch-globalconfig-frozen-singleton, val-004, completeness-globalconfig-dead-scalars)

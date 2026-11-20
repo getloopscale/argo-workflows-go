@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // T4.11 — WorkflowTemplate and CronWorkflow client operations

@@ -1,4 +1,4 @@
-# Threat Model Report — theo-forge SDK
+# Threat Model Report — loopzero-forge SDK
 **Date:** 2026-05-20
 **Methodology:** STRIDE per flow (Spoofing, Tampering, Repudiation, Information Disclosure,
 Denial of Service, Elevation of Privilege)
@@ -13,7 +13,7 @@ Denial of Service, Elevation of Privilege)
         |
         | (in-process calls)
         v
-[theo-forge SDK]  ──── serialize/  ──→ [Filesystem]
+[loopzero-forge SDK]  ──── serialize/  ──→ [Filesystem]
         |               expr/
         |               validate/
         |               config/ (GlobalConfig singleton)

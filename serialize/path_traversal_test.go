@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // T2.1 regression tests (SEC-001, sec-001-path-traversal-confirmed, inv-006).

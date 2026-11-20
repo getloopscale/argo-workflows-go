@@ -1,6 +1,6 @@
-module github.com/usetheodev/theo-forge
+module github.com/getloopscale/argo-workflows-go
 
-// govulncheck (2026-11-06) reports 10 stdlib CVEs reachable from theo-forge's
+// govulncheck (2026-11-06) reports 10 stdlib CVEs reachable from loopzero-forge's
 // call graph on Go 1.25.14, the last 1.25 release. None is fixed on the 1.25
 // line; the highest fixed-in version is 1.26.10 (crypto/x509 GO-2026-6809).
 // Require 1.26.10 to close them.

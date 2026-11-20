@@ -6,7 +6,7 @@ import (
 	"context"
 	"testing"
 
-	forge "github.com/usetheodev/theo-forge"
+	forge "github.com/getloopscale/argo-workflows-go"
 )
 
 // TestE2E_HelloWorld submits the README quickstart workflow against
@@ -31,7 +31,7 @@ func TestE2E_HelloWorld(t *testing.T) {
 				Name:    "main",
 				Image:   "alpine:3.18",
 				Command: []string{"echo"},
-				Args:    []string{"hello from theo-forge e2e"},
+				Args:    []string{"hello from loopzero-forge e2e"},
 			},
 		},
 	}

@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/expr"
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/expr"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // === BUILDERS ===

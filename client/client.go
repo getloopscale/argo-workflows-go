@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // defaultClientTimeout applies to HTTP requests when callers do not

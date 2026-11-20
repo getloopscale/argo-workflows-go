@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // T2.6 regression tests (SEC-006, SEC-007) + EC-6 (UnmarshalJSON rejects "***").

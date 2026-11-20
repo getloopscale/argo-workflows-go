@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	forge "github.com/usetheodev/theo-forge"
-	"github.com/usetheodev/theo-forge/model"
+	forge "github.com/getloopscale/argo-workflows-go"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // TestE2E_NewConfigHookIsolation is the live proof for ADR-001
@@ -33,7 +33,7 @@ func TestE2E_NewConfigHookIsolation(t *testing.T) {
 	name := uniqueName("hooks")
 	cleanupWorkflow(t, name)
 
-	const injectedLabel = "theo-forge.test/hook-fired"
+	const injectedLabel = "loopzero-forge.test/hook-fired"
 
 	cfg := forge.NewConfig()
 	cfg.RegisterTemplateHook(func(tpl *model.TemplateModel) {

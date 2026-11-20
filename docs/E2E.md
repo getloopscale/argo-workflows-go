@@ -1,4 +1,4 @@
-# E2E Tests — theo-forge
+# E2E Tests — loopzero-forge
 
 End-to-end tests submit workflows to a **real Argo Workflows control plane**
 running on a local [kind](https://kind.sigs.k8s.io/) cluster and assert on
@@ -31,7 +31,7 @@ See [`scripts/e2e-versions.sh`](../scripts/e2e-versions.sh):
 
 | Component | Version | Why this pin |
 |-----------|---------|--------------|
-| Argo Workflows | `v4.0.3` | Matches the appVersion shipped by argo-helm chart 1.0.5 — the version Theo Cloud installs in production (`infra/argocd-bootstrap/apps/build-argo-workflows.yaml`). Keeping E2E aligned with prod prevents v3↔v4 schema drift surprises. |
+| Argo Workflows | `v4.0.3` | Matches the appVersion shipped by argo-helm chart 1.0.5 — the version LoopZero Cloud installs in production (`infra/argocd-bootstrap/apps/build-argo-workflows.yaml`). Keeping E2E aligned with prod prevents v3↔v4 schema drift surprises. |
 | kind | `v0.24.0` | Last release before kind started auto-bumping to k8s 1.32 (which has CRD changes we have not validated). |
 | kind node image | `kindest/node:v1.31.0` | k8s 1.31 — matches Argo v3.5 support matrix. |
 
@@ -77,7 +77,7 @@ host                                        kind cluster (k8s 1.31)
 │   lifecycle_test  │ ◄──── kubectl ──────► │  └───────────────────┘  │
 └───────────────────┘    (apply, get,       │                         │
                           watch, delete)    │  + ServiceAccount       │
-        ▲                                   │    theo-forge-e2e       │
+        ▲                                   │    loopzero-forge-e2e       │
         │                                   │    (cluster-admin RBAC) │
         │                                   └─────────────────────────┘
    ARGO_TOKEN_FILE                                 ▲
@@ -88,7 +88,7 @@ host                                        kind cluster (k8s 1.31)
 
 The bearer token lives at `.e2e/argo-token` (mode 0600, .gitignored).
 Tests read it via `os.ReadFile`; you can re-mint it with
-`kubectl -n argo create token theo-forge-e2e --duration=24h`.
+`kubectl -n argo create token loopzero-forge-e2e --duration=24h`.
 
 ## Test inventory
 
@@ -122,7 +122,7 @@ package e2e
 import (
     "context"
     "testing"
-    forge "github.com/usetheodev/theo-forge"
+    forge "github.com/getloopscale/argo-workflows-go"
 )
 
 func TestE2E_MyFeature(t *testing.T) {
@@ -159,7 +159,7 @@ Currently **local-only** (`make e2e`). To enable in GitHub Actions:
 ```yaml
 - uses: helm/kind-action@<sha>  # see scripts/e2e-versions.sh for the pin
   with:
-    cluster_name: theo-forge-e2e
+    cluster_name: loopzero-forge-e2e
     node_image: kindest/node:v1.31.0
 - name: install argo + run e2e
   run: |

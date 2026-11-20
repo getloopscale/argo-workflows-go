@@ -3,7 +3,7 @@ package forge
 import (
 	"testing"
 
-	"github.com/usetheodev/theo-forge/serialize"
+	"github.com/getloopscale/argo-workflows-go/serialize"
 )
 
 // Extra-2 — performance baselines for the hot paths.

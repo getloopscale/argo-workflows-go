@@ -12,7 +12,7 @@ import (
 
 	yamlconv "sigs.k8s.io/yaml"
 
-	"github.com/usetheodev/theo-forge/serialize"
+	"github.com/getloopscale/argo-workflows-go/serialize"
 )
 
 // --- Pointer helpers ---

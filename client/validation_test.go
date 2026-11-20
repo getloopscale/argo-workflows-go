@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // T2.3 regression tests (SEC-003). Covers validateK8sName, validateK8sNamespace,

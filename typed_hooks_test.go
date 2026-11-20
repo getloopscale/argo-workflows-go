@@ -4,8 +4,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/config"
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/config"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // T3.2 regression tests (completeness-workflow-hook-not-fired-for-wftemplate).

@@ -1,10 +1,10 @@
-# Architecture Map — theo-forge
+# Architecture Map — loopzero-forge
 
 Generated: Phase 1, Iteration 1 (2026-05-20)
 
 ## Project Identity
 
-- **Module**: `github.com/usetheodev/theo-forge`
+- **Module**: `github.com/getloopscale/argo-workflows-go`
 - **Language**: Go 1.25
 - **Type**: Library SDK (no server, no runtime)
 - **Purpose**: Type-safe programmatic builder for Argo Workflows CRDs in Go. Equivalent of Hera (Python SDK).

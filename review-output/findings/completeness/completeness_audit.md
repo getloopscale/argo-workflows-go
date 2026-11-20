@@ -1,4 +1,4 @@
-# Completeness Audit — theo-forge
+# Completeness Audit — loopzero-forge
 **Phase:** 2 | **Date:** 2026-05-20 | **Auditor:** completeness-auditor (chief-reviewer)
 
 ## Summary
@@ -159,11 +159,11 @@ Note: `Or()` does produce parenthesized strings `(A || B)`, so `Or()`-then-`Then
 
 ```
 go test ./... output:
-? github.com/usetheodev/theo-forge/config    [no test files]
-? github.com/usetheodev/theo-forge/expr      [no test files]
-? github.com/usetheodev/theo-forge/model     [no test files]
-? github.com/usetheodev/theo-forge/serialize [no test files]
-? github.com/usetheodev/theo-forge/validate  [no test files]
+? github.com/getloopscale/argo-workflows-go/config    [no test files]
+? github.com/getloopscale/argo-workflows-go/expr      [no test files]
+? github.com/getloopscale/argo-workflows-go/model     [no test files]
+? github.com/getloopscale/argo-workflows-go/serialize [no test files]
+? github.com/getloopscale/argo-workflows-go/validate  [no test files]
 ```
 
 These packages contain critical logic: expression DSL building, resource unit validation, YAML/JSON serialization, config hook dispatch. Zero isolated test coverage exists.
@@ -237,7 +237,7 @@ The serialize package has asymmetric coverage:
 
 | Package | Test Files | Coverage |
 |---|---|---|
-| github.com/usetheodev/theo-forge | 16 test files | High |
+| github.com/getloopscale/argo-workflows-go | 16 test files | High |
 | client | 1 test file | Moderate |
 | config | 0 test files | None |
 | expr | 0 test files | None |
