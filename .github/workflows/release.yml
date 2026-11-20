@@ -90,7 +90,7 @@ jobs:
       - name: Generate SBOM (CycloneDX)
         uses: CycloneDX/gh-gomod-generate-sbom@v2
         with:
-          version: latest
+          version: v1
           args: mod -licenses -json -output sbom.cdx.json
 
       - name: Attest build provenance
