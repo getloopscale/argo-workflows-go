@@ -10,7 +10,7 @@ must be, so they can be audited and re-applied if the repo migrates.
 
 ## Branch: `main`
 
-Apply via `gh api -X PUT /repos/usetheodev/theo-forge/branches/main/protection`
+Apply via `gh api -X PUT /repos/getloopscale/loopzero-forge/branches/main/protection`
 or the equivalent UI configuration:
 
 - [ ] **Require a pull request before merging**
@@ -59,5 +59,5 @@ After applying the settings, attempt the following PRs in a sandbox fork:
 2. Push a force update to main — must be rejected.
 3. Submit a PR with a lint failure — `Lint` required check must block merge.
 
-Save the JSON output of `gh api /repos/usetheodev/theo-forge/branches/main/protection`
+Save the JSON output of `gh api /repos/getloopscale/loopzero-forge/branches/main/protection`
 to `docs/branch-protection-snapshot.json` for periodic audit.

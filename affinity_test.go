@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 func TestWorkflow_WithPodAffinity_Serializes(t *testing.T) {
@@ -270,10 +270,10 @@ func TestBuild_DefaultAffinity_NotInjectedWhenOptOutTrue(t *testing.T) {
 	}
 }
 
-func TestColocateByLabel_MatchesTheoJSON(t *testing.T) {
-	// The Theo PodSpecPatch wraps the affinity: {"affinity":{...}}.
+func TestColocateByLabel_MatchesLoopZeroJSON(t *testing.T) {
+	// The LoopZero PodSpecPatch wraps the affinity: {"affinity":{...}}.
 	// ColocateByLabel returns the inner *Affinity object. We compare the inner part.
-	theoAffinityJSON := `{"podAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchLabels":{"workflows.argoproj.io/workflow":"{{workflow.name}}"}},"topologyKey":"kubernetes.io/hostname"}]}}`
+	loopzeroAffinityJSON := `{"podAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchLabels":{"workflows.argoproj.io/workflow":"{{workflow.name}}"}},"topologyKey":"kubernetes.io/hostname"}]}}`
 
 	affinity := ColocateByLabel(
 		"workflows.argoproj.io/workflow",
@@ -288,7 +288,7 @@ func TestColocateByLabel_MatchesTheoJSON(t *testing.T) {
 
 	// Compare as maps to ignore field ordering
 	var expected, actual map[string]interface{}
-	if err := json.Unmarshal([]byte(theoAffinityJSON), &expected); err != nil {
+	if err := json.Unmarshal([]byte(loopzeroAffinityJSON), &expected); err != nil {
 		t.Fatalf("unmarshal expected: %v", err)
 	}
 	if err := json.Unmarshal(got, &actual); err != nil {
@@ -298,6 +298,6 @@ func TestColocateByLabel_MatchesTheoJSON(t *testing.T) {
 	expectedBytes, _ := json.Marshal(expected)
 	actualBytes, _ := json.Marshal(actual)
 	if !bytes.Equal(expectedBytes, actualBytes) {
-		t.Errorf("ColocateByLabel output does not match Theo affinity.\nExpected: %s\nGot:      %s", expectedBytes, actualBytes)
+		t.Errorf("ColocateByLabel output does not match LoopZero affinity.\nExpected: %s\nGot:      %s", expectedBytes, actualBytes)
 	}
 }

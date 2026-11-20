@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://usetheo.dev">
-    <img src="https://usetheo.dev/logo.png" alt="Theo" height="80" />
+  <a href="https://loopzero.example">
+    <img src="https://loopzero.example/logo.png" alt="LoopZero" height="80" />
   </a>
 </p>
 
@@ -10,11 +10,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/usetheodev/theo-forge/actions/workflows/ci.yml"><img src="https://github.com/usetheodev/theo-forge/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://pkg.go.dev/github.com/usetheodev/theo-forge"><img src="https://pkg.go.dev/badge/github.com/usetheodev/theo-forge.svg" alt="Go Reference"></a>
-  <a href="https://goreportcard.com/report/github.com/usetheodev/theo-forge"><img src="https://goreportcard.com/badge/github.com/usetheodev/theo-forge" alt="Go Report Card"></a>
+  <a href="https://github.com/getloopscale/argo-workflows-go/actions/workflows/ci.yml"><img src="https://github.com/getloopscale/argo-workflows-go/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://pkg.go.dev/github.com/getloopscale/argo-workflows-go"><img src="https://pkg.go.dev/badge/github.com/getloopscale/argo-workflows-go.svg" alt="Go Reference"></a>
+  <a href="https://goreportcard.com/report/github.com/getloopscale/argo-workflows-go"><img src="https://goreportcard.com/badge/github.com/getloopscale/argo-workflows-go" alt="Go Report Card"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License: Apache-2.0"></a>
-  <a href="https://github.com/usetheodev/theo-forge/releases"><img src="https://img.shields.io/github/v/release/usetheodev/theo-forge?include_prereleases&sort=semver" alt="Release"></a>
+  <a href="https://github.com/getloopscale/argo-workflows-go/releases"><img src="https://img.shields.io/github/v/release/getloopscale/loopzero-forge?include_prereleases&sort=semver" alt="Release"></a>
 </p>
 
 ---
@@ -36,10 +36,10 @@ Define workflows as Go structs, get compile-time safety, and let Forge handle th
 ## Install
 
 ```bash
-go get github.com/usetheodev/theo-forge
+go get github.com/getloopscale/argo-workflows-go
 ```
 
-Requires **Go 1.25+**.
+Requires **Go 1.26.11+**.
 
 ## Quick Start
 
@@ -50,7 +50,7 @@ import (
     "fmt"
     "log"
 
-    forge "github.com/usetheodev/theo-forge"
+    forge "github.com/getloopscale/argo-workflows-go"
 )
 
 func main() {
@@ -172,7 +172,7 @@ dag.AddTasks(flipTask, headsTask, tailsTask)
 Submit, list, and lint workflows against a running Argo server:
 
 ```go
-import "github.com/usetheodev/theo-forge/client"
+import "github.com/getloopscale/argo-workflows-go/client"
 
 svc := client.NewWorkflowsService(
     "https://argo.example.com",
@@ -195,7 +195,7 @@ linted, err := svc.LintWorkflow(ctx, w)
 Build Argo expressions with type safety instead of raw strings:
 
 ```go
-import "github.com/usetheodev/theo-forge/expr"
+import "github.com/getloopscale/argo-workflows-go/expr"
 
 // Reference task outputs
 ref := expr.Tasks("my-task").Attr("outputs.result")
@@ -306,13 +306,13 @@ inspection or programmatic reuse.
 
 | Package | Description |
 |---------|-------------|
-| `theo-forge` | Core builder API — main types and fluent constructors |
-| `theo-forge/model` | Serializable types matching the Argo Workflows API schema |
-| `theo-forge/expr` | Expression DSL for conditionals and parameter references |
-| `theo-forge/client` | REST client for the Argo Workflows API |
-| `theo-forge/serialize` | YAML/JSON serialization and file I/O helpers |
-| `theo-forge/validate` | Resource unit validation (binary/decimal units) |
-| `theo-forge/config` | Global configuration and hook management |
+| `loopzero-forge` | Core builder API — main types and fluent constructors |
+| `loopzero-forge/model` | Serializable types matching the Argo Workflows API schema |
+| `loopzero-forge/expr` | Expression DSL for conditionals and parameter references |
+| `loopzero-forge/client` | REST client for the Argo Workflows API |
+| `loopzero-forge/serialize` | YAML/JSON serialization and file I/O helpers |
+| `loopzero-forge/validate` | Resource unit validation (binary/decimal units) |
+| `loopzero-forge/config` | Global configuration and hook management |
 
 ## Running Tests
 
@@ -345,6 +345,6 @@ Please keep PRs focused — one feature or fix per PR.
 
 ## Community
 
-- Discord: https://discord.usetheo.dev/
-- X: https://x.com/usetheodev
-- LinkedIn: https://linkedin.com/company/usetheodev
+- Discord: https://discord.loopzero.example/
+- X: https://x.com/getloopscale
+- LinkedIn: https://linkedin.com/company/getloopscale

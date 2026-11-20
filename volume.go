@@ -1,9 +1,10 @@
 package forge
 
 import (
+	"errors"
 	"fmt"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // VolumeBuilder is implemented by types that can build a VolumeModel.
@@ -247,7 +248,7 @@ func (v NFSVolume) BuildVolume() (model.VolumeModel, error) {
 // ProjectedVolume is a volume that aggregates multiple sources (ServiceAccountToken,
 // ConfigMap, Secret, DownwardAPI) into a single mount point.
 //
-// Primary use case in Theo: Sigstore cosign keyless OIDC signing.
+// Primary use case in LoopZero: Sigstore cosign keyless OIDC signing.
 // Each build worker pod mounts a SA token with audience="sigstore" so cosign
 // can present it to Fulcio for short-lived signing certificate issuance,
 // instead of using a long-lived static key.
@@ -323,52 +324,9 @@ func (v ProjectedVolume) BuildVolume() (model.VolumeModel, error) {
 	}
 	sources := make([]model.VolumeProjectionModel, 0, len(v.Sources))
 	for i, s := range v.Sources {
-		count := 0
-		if s.ServiceAccountToken != nil {
-			count++
-		}
-		if s.ConfigMap != nil {
-			count++
-		}
-		if s.Secret != nil {
-			count++
-		}
-		if s.DownwardAPI != nil {
-			count++
-		}
-		if count != 1 {
-			return model.VolumeModel{}, fmt.Errorf("projected volume %q source[%d]: exactly one of ServiceAccountToken/ConfigMap/Secret/DownwardAPI must be set (got %d)", v.Name, i, count)
-		}
-
-		var proj model.VolumeProjectionModel
-		if s.ServiceAccountToken != nil {
-			if s.ServiceAccountToken.Path == "" {
-				return model.VolumeModel{}, fmt.Errorf("projected volume %q source[%d] ServiceAccountToken: Path is required", v.Name, i)
-			}
-			proj.ServiceAccountToken = &model.ServiceAccountTokenProjectionModel{
-				Audience:          s.ServiceAccountToken.Audience,
-				ExpirationSeconds: s.ServiceAccountToken.ExpirationSeconds,
-				Path:              s.ServiceAccountToken.Path,
-			}
-		}
-		if s.ConfigMap != nil {
-			proj.ConfigMap = &model.ConfigMapVolumeModel{
-				Name:        s.ConfigMap.Name,
-				DefaultMode: s.ConfigMap.DefaultMode,
-				Optional:    s.ConfigMap.Optional,
-			}
-		}
-		if s.Secret != nil {
-			proj.Secret = &model.SecretVolumeModel{
-				SecretName:  s.Secret.SecretName,
-				DefaultMode: s.Secret.DefaultMode,
-				Optional:    s.Secret.Optional,
-			}
-		}
-		if s.DownwardAPI != nil {
-			proj.DownwardAPI = &model.DownwardAPIVolumeModel{
-				DefaultMode: s.DownwardAPI.DefaultMode,
-			}
+		proj, err := s.projection()
+		if err != nil {
+			return model.VolumeModel{}, fmt.Errorf("projected volume %q source[%d]: %w", v.Name, i, err)
 		}
 		sources = append(sources, proj)
 	}
@@ -380,4 +338,56 @@ func (v ProjectedVolume) BuildVolume() (model.VolumeModel, error) {
 			Sources:     sources,
 		},
 	}, nil
+}
+
+// setCount reports how many of the mutually exclusive source kinds are set.
+func (s VolumeProjection) setCount() int {
+	count := 0
+	for _, set := range []bool{
+		s.ServiceAccountToken != nil,
+		s.ConfigMap != nil,
+		s.Secret != nil,
+		s.DownwardAPI != nil,
+	} {
+		if set {
+			count++
+		}
+	}
+	return count
+}
+
+// projection converts the source into its model.
+func (s VolumeProjection) projection() (model.VolumeProjectionModel, error) {
+	var proj model.VolumeProjectionModel
+	if count := s.setCount(); count != 1 {
+		return proj, fmt.Errorf("exactly one of ServiceAccountToken/ConfigMap/Secret/DownwardAPI must be set (got %d)", count)
+	}
+	switch {
+	case s.ServiceAccountToken != nil:
+		if s.ServiceAccountToken.Path == "" {
+			return proj, errors.New("ServiceAccountToken: Path is required")
+		}
+		proj.ServiceAccountToken = &model.ServiceAccountTokenProjectionModel{
+			Audience:          s.ServiceAccountToken.Audience,
+			ExpirationSeconds: s.ServiceAccountToken.ExpirationSeconds,
+			Path:              s.ServiceAccountToken.Path,
+		}
+	case s.ConfigMap != nil:
+		proj.ConfigMap = &model.ConfigMapVolumeModel{
+			Name:        s.ConfigMap.Name,
+			DefaultMode: s.ConfigMap.DefaultMode,
+			Optional:    s.ConfigMap.Optional,
+		}
+	case s.Secret != nil:
+		proj.Secret = &model.SecretVolumeModel{
+			SecretName:  s.Secret.SecretName,
+			DefaultMode: s.Secret.DefaultMode,
+			Optional:    s.Secret.Optional,
+		}
+	case s.DownwardAPI != nil:
+		proj.DownwardAPI = &model.DownwardAPIVolumeModel{
+			DefaultMode: s.DownwardAPI.DefaultMode,
+		}
+	}
+	return proj, nil
 }

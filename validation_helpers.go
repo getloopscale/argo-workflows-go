@@ -1,6 +1,6 @@
 package forge
 
-import "github.com/usetheodev/theo-forge/validate"
+import "github.com/getloopscale/argo-workflows-go/validate"
 
 // T4.2 — validation proxies split from helpers.go.
 // These are thin wrappers around validate/ — kept for backward-compat with

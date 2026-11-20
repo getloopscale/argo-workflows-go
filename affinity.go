@@ -1,6 +1,6 @@
 package forge
 
-import "github.com/usetheodev/theo-forge/model"
+import "github.com/getloopscale/argo-workflows-go/model"
 
 // workflowLabelKey is the label Argo Controller injects on every pod
 // of a workflow. Matching this label co-locates every step on the

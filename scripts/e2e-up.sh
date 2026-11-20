@@ -93,17 +93,17 @@ kubectl -n "${ARGO_NAMESPACE}" wait --for=condition=Available --timeout="${ARGO_
 
 # --- Service account + bearer token for the REST client ---
 
-if ! kubectl -n "${ARGO_NAMESPACE}" get sa theo-forge-e2e >/dev/null 2>&1; then
+if ! kubectl -n "${ARGO_NAMESPACE}" get sa loopzero-forge-e2e >/dev/null 2>&1; then
   log "creating ServiceAccount + ClusterRoleBinding for the e2e client"
-  kubectl -n "${ARGO_NAMESPACE}" create sa theo-forge-e2e
-  kubectl create clusterrolebinding theo-forge-e2e-admin \
+  kubectl -n "${ARGO_NAMESPACE}" create sa loopzero-forge-e2e
+  kubectl create clusterrolebinding loopzero-forge-e2e-admin \
     --clusterrole=cluster-admin \
-    --serviceaccount="${ARGO_NAMESPACE}:theo-forge-e2e" >/dev/null
+    --serviceaccount="${ARGO_NAMESPACE}:loopzero-forge-e2e" >/dev/null
 fi
 
 # Kubernetes 1.24+ does not auto-issue tokens for SAs; mint one ourselves.
-log "minting bearer token for ServiceAccount theo-forge-e2e"
-kubectl -n "${ARGO_NAMESPACE}" create token theo-forge-e2e --duration=24h >"${ARGO_TOKEN_FILE}"
+log "minting bearer token for ServiceAccount loopzero-forge-e2e"
+kubectl -n "${ARGO_NAMESPACE}" create token loopzero-forge-e2e --duration=24h >"${ARGO_TOKEN_FILE}"
 chmod 600 "${ARGO_TOKEN_FILE}"
 
 # --- Port-forward argo-server for the REST client to talk to ---

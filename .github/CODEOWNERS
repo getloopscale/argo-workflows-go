@@ -6,9 +6,9 @@
 # CODEOWNERS before merge — see docs/REPO-SETTINGS.md.
 
 # Default: any change requires maintainer review.
-*       @usetheodev
+*       @getloopscale
 
 # .github/** is the supply-chain attack surface (CI workflows, Dependabot
 # config, this file). Require maintainer review even when Dependabot
 # opens a PR — Dependabot cannot self-approve.
-/.github/   @usetheodev
+/.github/   @getloopscale

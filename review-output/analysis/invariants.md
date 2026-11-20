@@ -1,4 +1,4 @@
-# System Invariants — theo-forge SDK
+# System Invariants — loopzero-forge SDK
 **Defined:** Phase 7, Global Iteration 7
 **Date:** 2026-05-20
 

@@ -17,12 +17,12 @@ Edge cases encontrados: 11 (MUST FIX: 4, SHOULD TEST: 4, DOCUMENT: 3)
 - **Impacto:** Compilação quebra imediatamente em T1.1 (`RetryOnFailure redeclared in this block`). Bloqueia TODA a Phase 1, 2, 3. Não é um edge — é falha de compilação determinística.
 - **Fix sugerido:** Renomear a factory. Opções: `NewRetryOnFailure(...)` (consistente com `NewConfig`), `RetryOnFailureStrategy(...)`, ou `RetryWithBackoff(...)`. Recomendo `NewRetryOnFailure` (idiomatic Go constructor prefix). Atualizar ADR-001 + T1.1/T1.3/T3.3 + CHANGELOG entries + godoc cross-refs.
 
-### EC-2: Sequência forge-release → Theo-bump não tem fallback se review do PR forge demora
+### EC-2: Sequência forge-release → LoopZero-bump não tem fallback se review do PR forge demora
 
 - **Task afetada:** T2.1 → T3.1 (Phase 2 gate)
 - **Família:** State / Timing
-- **Cenário:** ADR-003 proíbe pseudo-version. Se PR forge ficar 2+ dias em review (humano), a worktree `chore/use-forge-helpers` em `/home/paulo/theo-script-pr` fica parada com `helpers.go` modificado mentalmente mas sem código pronto, e o outro agente em `develop` pode mergear conflitos no diretório `api/internal/argo/`.
-- **Impacto:** Worktree Theo desatualizada quando Phase 3 começar, gerando merge conflicts em `helpers.go` e `languages.go` (os arquivos mais editados).
+- **Cenário:** ADR-003 proíbe pseudo-version. Se PR forge ficar 2+ dias em review (humano), a worktree `chore/use-forge-helpers` em `/home/paulo/loopzero-script-pr` fica parada com `helpers.go` modificado mentalmente mas sem código pronto, e o outro agente em `develop` pode mergear conflitos no diretório `api/internal/argo/`.
+- **Impacto:** Worktree LoopZero desatualizada quando Phase 3 começar, gerando merge conflicts em `helpers.go` e `languages.go` (os arquivos mais editados).
 - **Fix sugerido:** Adicionar ao plano antes de T3.1: `git fetch origin && git rebase origin/develop` (ou `git merge origin/develop`) na branch worktree imediatamente antes de iniciar T3.1. Documentar como passo 0 de T3.1.
 
 ### EC-3: Aliasing das Resources presets — godoc afirma "safe to mutate" mas Slices/Maps internos compartilham
@@ -48,7 +48,7 @@ Edge cases encontrados: 11 (MUST FIX: 4, SHOULD TEST: 4, DOCUMENT: 3)
 ### EC-5: `forge.Ptr` para tipos não-básicos pode ter aliasing inesperado vs `ptr` original
 
 - **Task afetada:** T3.2
-- **Teste sugerido:** `TestPtrMigration_StructTypes` — em Theo, identificar todos os call sites de `ptr` com tipos não-básicos (struct, slice, map) e validar que `forge.Ptr` produz mesmo comportamento. Para basics (`int`, `string`, `bool`) é trivial-equivalente. Para `ptr(SomeStruct{...})` ambos retornam pointer fresh; OK. Mas se existe `ptr(sliceVar)` capturando uma variável local, o pointer aponta para o local da call — `forge.Ptr` faz o mesmo (Go semantics). Apenas confirmar via diff de YAML golden em 1 workflow representativo.
+- **Teste sugerido:** `TestPtrMigration_StructTypes` — em LoopZero, identificar todos os call sites de `ptr` com tipos não-básicos (struct, slice, map) e validar que `forge.Ptr` produz mesmo comportamento. Para basics (`int`, `string`, `bool`) é trivial-equivalente. Para `ptr(SomeStruct{...})` ambos retornam pointer fresh; OK. Mas se existe `ptr(sliceVar)` capturando uma variável local, o pointer aponta para o local da call — `forge.Ptr` faz o mesmo (Go semantics). Apenas confirmar via diff de YAML golden em 1 workflow representativo.
 
 ### EC-6: `grep "\bptr\b"` em T3.2 pode pegar falsos positivos (`Ptr` em outros contextos)
 
@@ -77,7 +77,7 @@ Edge cases encontrados: 11 (MUST FIX: 4, SHOULD TEST: 4, DOCUMENT: 3)
 
 - **Risco aceito:** Improvável (Phase 1 tem gates fortes: race, lint, coverage, 19 E2E). Se acontecer, o remédio é tag v0.5.2 com correção. Não justifica adicionar processo no plano.
 
-### EC-11: PR Theo aberto contra `develop` aguarda maintainer merge "fora do escopo"
+### EC-11: PR LoopZero aberto contra `develop` aguarda maintainer merge "fora do escopo"
 
 - **Risco aceito:** Global DoD já marca como fora de escopo. Aceitável. Apenas garantir que o PR description deixa claro que o forge v0.5.1 é pré-requisito (link cruzado).
 

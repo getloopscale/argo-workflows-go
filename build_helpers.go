@@ -3,10 +3,10 @@ package forge
 import (
 	"fmt"
 
-	"github.com/usetheodev/theo-forge/config"
-	"github.com/usetheodev/theo-forge/expr"
-	"github.com/usetheodev/theo-forge/model"
-	"github.com/usetheodev/theo-forge/validate"
+	"github.com/getloopscale/argo-workflows-go/config"
+	"github.com/getloopscale/argo-workflows-go/expr"
+	"github.com/getloopscale/argo-workflows-go/model"
+	"github.com/getloopscale/argo-workflows-go/validate"
 )
 
 // T4.2 — split from helpers.go per SRP. Contains:

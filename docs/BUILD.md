@@ -2,7 +2,7 @@
 
 ## Build prerequisites
 
-- Go 1.25.0 or later (matches `go.mod`).
+- Go 1.26.11 or later (matches `go.mod`).
 - `make` (optional; commands below use `go` directly).
 
 ## Standard build
@@ -25,7 +25,7 @@ CI enforces all four. See `.github/workflows/ci.yml`.
 
 ## Vendoring
 
-theo-forge does NOT ship a `vendor/` directory. The default build path
+loopzero-forge does NOT ship a `vendor/` directory. The default build path
 uses `proxy.golang.org` (Go module proxy). This keeps the repository
 small and the dependency tree auditable via `go.sum`.
 

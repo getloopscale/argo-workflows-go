@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	forge "github.com/usetheodev/theo-forge"
+	forge "github.com/getloopscale/argo-workflows-go"
 )
 
 // TestE2E_DAGDiamond exercises the canonical "diamond" DAG (A → B,C → D)

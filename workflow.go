@@ -3,9 +3,9 @@ package forge
 import (
 	"fmt"
 
-	"github.com/usetheodev/theo-forge/config"
-	"github.com/usetheodev/theo-forge/model"
-	"github.com/usetheodev/theo-forge/serialize"
+	"github.com/getloopscale/argo-workflows-go/config"
+	"github.com/getloopscale/argo-workflows-go/model"
+	"github.com/getloopscale/argo-workflows-go/serialize"
 )
 
 const (

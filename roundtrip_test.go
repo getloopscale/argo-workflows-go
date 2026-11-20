@@ -9,9 +9,9 @@ import (
 
 	"sigs.k8s.io/yaml"
 
-	"github.com/usetheodev/theo-forge/expr"
-	"github.com/usetheodev/theo-forge/model"
-	"github.com/usetheodev/theo-forge/serialize"
+	"github.com/getloopscale/argo-workflows-go/expr"
+	"github.com/getloopscale/argo-workflows-go/model"
+	"github.com/getloopscale/argo-workflows-go/serialize"
 )
 
 func TestRoundTripYAML(t *testing.T) {

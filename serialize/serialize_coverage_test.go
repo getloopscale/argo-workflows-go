@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // Phase 7 (T7.3) coverage backfill for serialize package.

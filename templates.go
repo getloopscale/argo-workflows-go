@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // timeParseDuration is a thin indirection over time.ParseDuration to keep

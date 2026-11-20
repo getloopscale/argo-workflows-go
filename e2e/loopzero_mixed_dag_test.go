@@ -7,12 +7,12 @@ import (
 	"strings"
 	"testing"
 
-	forge "github.com/usetheodev/theo-forge"
-	"github.com/usetheodev/theo-forge/model"
+	forge "github.com/getloopscale/argo-workflows-go"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
-// TestTheoShape_MixedDAG_InlineAndCWT proves the architectural pattern
-// that drives the ENTIRE Theo build pipeline: a DAG that mixes
+// TestLoopZeroShape_MixedDAG_InlineAndCWT proves the architectural pattern
+// that drives the ENTIRE LoopZero build pipeline: a DAG that mixes
 //
 //   - tasks calling reusable steps via TemplateRef{ClusterScope:true}
 //     (clone, cache, dockerfile-lint, syft, cosign, harbor-mirror)
@@ -20,10 +20,10 @@ import (
 //     (install, build, buildkit-per-app)
 //
 // If forge stops emitting `clusterScope: true` or `templateRef:` correctly,
-// EVERY Theo build fails. This is the most important Theo-shape test.
+// EVERY LoopZero build fails. This is the most important LoopZero-shape test.
 //
 // Test flow:
-//  1. Create a ClusterWorkflowTemplate in the cluster (mimics Theo's
+//  1. Create a ClusterWorkflowTemplate in the cluster (mimics LoopZero's
 //     `clone` CWT) — exposes a template named "say".
 //  2. Build a forge.Workflow whose DAG has:
 //     - Task 'first'  → TemplateRef{Name: "<cwt>", Template: "say", ClusterScope: true}
@@ -31,11 +31,11 @@ import (
 //  3. Submit, wait Succeeded, dump manifest.
 //  4. Assert the cluster's view contains `clusterScope: true` AND the
 //     inline template name on the right task.
-func TestTheoShape_MixedDAG_InlineAndCWT(t *testing.T) {
-	wfName := uniqueName("theo-mixed")
+func TestLoopZeroShape_MixedDAG_InlineAndCWT(t *testing.T) {
+	wfName := uniqueName("loopzero-mixed")
 	cleanupWorkflow(t, wfName)
 
-	cwtName := "theo-e2e-shared-" + strings.Split(wfName, "-")[2] // unique cwt name
+	cwtName := "loopzero-e2e-shared-" + strings.Split(wfName, "-")[2] // unique cwt name
 	// Cleanup the CWT too (it's cluster-scoped, not workflow-scoped).
 	t.Cleanup(func() {
 		kubectl(t, "delete", "clusterworkflowtemplate", cwtName, "--ignore-not-found")
@@ -114,7 +114,7 @@ func TestTheoShape_MixedDAG_InlineAndCWT(t *testing.T) {
 	_ = waitWorkflowSucceeded(t, wfName, defaultWaitTimeout)
 
 	// 4. Cluster-side: confirm the manifest still says clusterScope and
-	//    the CWT name. This is what Theo's controller observes.
+	//    the CWT name. This is what LoopZero's controller observes.
 	manifest := dumpWorkflow(t, wfName)
 	mustContain := []string{
 		"clusterScope: true",
@@ -124,7 +124,7 @@ func TestTheoShape_MixedDAG_InlineAndCWT(t *testing.T) {
 	}
 	for _, needle := range mustContain {
 		if !strings.Contains(manifest, needle) {
-			t.Errorf("cluster manifest missing %q — Theo mixed-DAG regression\n%s",
+			t.Errorf("cluster manifest missing %q — LoopZero mixed-DAG regression\n%s",
 				needle, manifest)
 		}
 	}

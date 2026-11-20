@@ -1,7 +1,7 @@
 # Architecture Review — Phase 3
 **Date:** 2026-05-20
 **Reviewer:** Architecture Analyst (Chief Reviewer acting)
-**Codebase:** theo-forge v0.4.0
+**Codebase:** loopzero-forge v0.4.0
 
 ## Executive Summary
 

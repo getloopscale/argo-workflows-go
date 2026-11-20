@@ -1,22 +1,22 @@
-# theo-forge — Go SDK for Argo Workflows
+# loopzero-forge — Go SDK for Argo Workflows
 
 > This file is context for LLMs. Read it entirely before writing any code.
-> theo-forge lets you build Argo Workflow CRs programmatically in Go — type-safe, no YAML.
+> loopzero-forge lets you build Argo Workflow CRs programmatically in Go — type-safe, no YAML.
 
 ## Install
 
 ```bash
-go get github.com/usetheodev/theo-forge@latest
+go get github.com/getloopscale/argo-workflows-go@latest
 ```
 
 ```go
-import forge "github.com/usetheodev/theo-forge"
+import forge "github.com/getloopscale/argo-workflows-go"
 ```
 
 Sub-packages (import only when needed):
-- `github.com/usetheodev/theo-forge/expr` — expression builder
-- `github.com/usetheodev/theo-forge/model` — serializable model types
-- `github.com/usetheodev/theo-forge/client` — Argo REST client
+- `github.com/getloopscale/argo-workflows-go/expr` — expression builder
+- `github.com/getloopscale/argo-workflows-go/model` — serializable model types
+- `github.com/getloopscale/argo-workflows-go/client` — Argo REST client
 
 ---
 
@@ -142,7 +142,7 @@ Available on Step: `GetOutputParameter(name)`, `GetOutputResult()`, `GetOutputAr
 ### Expression helpers (package `expr`)
 
 ```go
-import "github.com/usetheodev/theo-forge/expr"
+import "github.com/getloopscale/argo-workflows-go/expr"
 
 expr.InputParam("msg")                    // "{{inputs.parameters.msg}}"
 expr.TaskOutputParam("gen", "result")     // "{{tasks.gen.outputs.parameters.result}}"
@@ -529,7 +529,7 @@ model, err := forge.FromFile("/path/to/workflow.yaml")
 ## REST Client (Argo Workflows API)
 
 ```go
-import "github.com/usetheodev/theo-forge/client"
+import "github.com/getloopscale/argo-workflows-go/client"
 
 svc := client.NewWorkflowsService("https://argo.example.com", "Bearer token", "default")
 
@@ -638,8 +638,8 @@ package main
 
 import (
     "fmt"
-    forge "github.com/usetheodev/theo-forge"
-    "github.com/usetheodev/theo-forge/expr"
+    forge "github.com/getloopscale/argo-workflows-go"
+    "github.com/getloopscale/argo-workflows-go/expr"
 )
 
 func ptr(s string) *string { return &s }

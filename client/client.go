@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // defaultClientTimeout applies to HTTP requests when callers do not
@@ -90,7 +90,7 @@ func (s *WorkflowsService) httpClient() HTTPClient {
 	}
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: !s.VerifySSL, //nolint:gosec // intentionally configurable via VerifySSL
+			InsecureSkipVerify: !s.VerifySSL, // #nosec G402 -- intentionally configurable via VerifySSL
 			MinVersion:         tls.VersionTLS12,
 		},
 	}

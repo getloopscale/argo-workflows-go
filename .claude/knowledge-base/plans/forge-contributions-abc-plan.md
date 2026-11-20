@@ -1,43 +1,43 @@
 # Plan: Forge contributions A+B+C — eliminar 1 duplicação + adicionar 2 presets úteis
 
-> **Version 1.1** — Implementa 3 contribuições identificadas na auditoria de uso Theo↔forge: (A) Theo descarta `ptr` próprio em favor de `forge.Ptr`; (B) forge ganha `NewRetryOnFailure` factory eliminando duplicação de configuração comum; (C) forge ganha `ResourcesTiny/Small/Medium` presets T-shirt-size que Theo já usa. Resultado: 1 helper a menos manter na Theo + 2 features novas no forge sem breaking change, com Theo migrando para consumi-las após release.
+> **Version 1.1** — Implementa 3 contribuições identificadas na auditoria de uso LoopZero↔forge: (A) LoopZero descarta `ptr` próprio em favor de `forge.Ptr`; (B) forge ganha `NewRetryOnFailure` factory eliminando duplicação de configuração comum; (C) forge ganha `ResourcesTiny/Small/Medium` presets T-shirt-size que LoopZero já usa. Resultado: 1 helper a menos manter na LoopZero + 2 features novas no forge sem breaking change, com LoopZero migrando para consumi-las após release.
 >
-> v1.1 incorpora 4 MUST FIX de `/edge-case-plan` (ver `## v1.1 Changelog` ao final): rename para evitar colisão com const `RetryOnFailure`, fetch+rebase antes de migrar Theo, alocação fresh de maps/slices em Resources presets, e baseline de coverage antes da release.
+> v1.1 incorpora 4 MUST FIX de `/edge-case-plan` (ver `## v1.1 Changelog` ao final): rename para evitar colisão com const `RetryOnFailure`, fetch+rebase antes de migrar LoopZero, alocação fresh de maps/slices em Resources presets, e baseline de coverage antes da release.
 
 ## Context
 
 Auditoria executada em 2026-05-20 (sessão atual) revelou:
 
-1. **Duplicação real**: Theo `helpers.go:18` define `ptr[T any](v T) *T` idêntico a `forge.Ptr[T any]` (build_helpers.go:221). Theo adicionou antes de forge ter o helper genérico (T1.1 do plano v0.5.0). Manter as duas formas é débito técnico — mesma assinatura, mesmo propósito.
+1. **Duplicação real**: LoopZero `helpers.go:18` define `ptr[T any](v T) *T` idêntico a `forge.Ptr[T any]` (build_helpers.go:221). LoopZero adicionou antes de forge ter o helper genérico (T1.1 do plano v0.5.0). Manter as duas formas é débito técnico — mesma assinatura, mesmo propósito.
 
-2. **Padrão comum não-genérico**: Theo `languages.go:535` define `retryStrategy(limit int, duration, factor, maxDuration string) *forge.RetryStrategy` que monta um RetryStrategy com:
+2. **Padrão comum não-genérico**: LoopZero `languages.go:535` define `retryStrategy(limit int, duration, factor, maxDuration string) *forge.RetryStrategy` que monta um RetryStrategy com:
    - `Limit: ptr(limit)`
    - `RetryPolicy: "OnFailure"`
    - `Backoff{Duration, Factor, MaxDuration}`
    - `Expression: 'asInt(lastRetry.exitCode) != 137'` (skip-OOM)
 
-   Esse pattern é usado em 5+ sites na Theo (delivery, syft, cosign, buildkit, harbor-mirror). Qualquer outro consumidor do forge com workflows de build vai re-implementar a mesma factory. Forge não oferece atalho.
+   Esse pattern é usado em 5+ sites na LoopZero (delivery, syft, cosign, buildkit, harbor-mirror). Qualquer outro consumidor do forge com workflows de build vai re-implementar a mesma factory. Forge não oferece atalho.
 
-3. **T-shirt size resources não-genéricas**: Theo `languages.go:551-570` define `resourcesTiny()` (50m/32Mi), `resourcesSmall()` (100m/128Mi), `resourcesMedium()` (500m/512Mi). Padrão convencional em build pipelines Kubernetes; forge não oferece presets, força cada consumidor a re-declarar.
+3. **T-shirt size resources não-genéricas**: LoopZero `languages.go:551-570` define `resourcesTiny()` (50m/32Mi), `resourcesSmall()` (100m/128Mi), `resourcesMedium()` (500m/512Mi). Padrão convencional em build pipelines Kubernetes; forge não oferece presets, força cada consumidor a re-declarar.
 
 Evidências documentadas:
-- Auditoria 2.9% de uso Theo↔forge (sessão atual)
-- Theo `api/internal/argo/helpers.go:18` — duplicação `ptr`
-- Theo `api/internal/argo/languages.go:535-570` — factories ausentes no forge
+- Auditoria 2.9% de uso LoopZero↔forge (sessão atual)
+- LoopZero `api/internal/argo/helpers.go:18` — duplicação `ptr`
+- LoopZero `api/internal/argo/languages.go:535-570` — factories ausentes no forge
 - 19/19 E2E forge contra Argo v4.0.3 PASS (linha-base)
-- 37/37 packages Theo PASS após bump forge v0.5.0-pseudo (linha-base)
+- 37/37 packages LoopZero PASS após bump forge v0.5.0-pseudo (linha-base)
 
 ## Objective
 
-**Done = Theo deleta `ptr`, `retryStrategy`, `resourcesTiny/Small/Medium` e usa exclusivamente `forge.Ptr`, `forge.NewRetryOnFailure`, `forge.Resources{Tiny,Small,Medium}`; todos os testes verdes em ambos repos; backward-compat preservada para outros consumidores do forge.**
+**Done = LoopZero deleta `ptr`, `retryStrategy`, `resourcesTiny/Small/Medium` e usa exclusivamente `forge.Ptr`, `forge.NewRetryOnFailure`, `forge.Resources{Tiny,Small,Medium}`; todos os testes verdes em ambos repos; backward-compat preservada para outros consumidores do forge.**
 
 Goals específicos e mensuráveis:
 
 1. Forge ganha 4 novos símbolos exportados (`NewRetryOnFailure`, `ResourcesTiny`, `ResourcesSmall`, `ResourcesMedium`) com testes unitários e godocs.
 2. Forge `make verify` continua ALL QUALITY GATES PASSED.
-3. Theo `helpers.go` perde a função `ptr` (callers usam `forge.Ptr`).
-4. Theo `languages.go` perde `retryStrategy`, `resourcesTiny`, `resourcesSmall`, `resourcesMedium` (callers usam factories forge).
-5. Theo `go test ./...` continua 37/37 PASS, zero comportamento alterado.
+3. LoopZero `helpers.go` perde a função `ptr` (callers usam `forge.Ptr`).
+4. LoopZero `languages.go` perde `retryStrategy`, `resourcesTiny`, `resourcesSmall`, `resourcesMedium` (callers usam factories forge).
+5. LoopZero `go test ./...` continua 37/37 PASS, zero comportamento alterado.
 6. PRs separados em cada repo, revisáveis isoladamente.
 
 ## ADRs
@@ -47,10 +47,10 @@ Goals específicos e mensuráveis:
 | Campo | Valor |
 |-------|-------|
 | **ID** | D1 |
-| **Decisão** | Forge expõe `func NewRetryOnFailure(limit int, initial, factor, maxDuration string) *RetryStrategy`. Assinatura espelha exatamente o `retryStrategy()` da Theo (mesma ordem de parâmetros). Retorna `*RetryStrategy` populado com `RetryPolicy: "OnFailure"`, `Backoff` montado e expressão skip-OOM (`asInt(lastRetry.exitCode) != 137`). |
-| **Rationale** | KISS (cita `~/.claude/CLAUDE.md §10` e `.claude/rules/clean-code.md §Function size`). Factory de 1 chamada é mais simples que builder com 4 métodos. Theo já validou o shape em produção (5 sites consumidores). Skip-OOM expression é convenção razoável; consumidores que querem outro behavior podem ainda usar `&RetryStrategy{...}` literal. |
+| **Decisão** | Forge expõe `func NewRetryOnFailure(limit int, initial, factor, maxDuration string) *RetryStrategy`. Assinatura espelha exatamente o `retryStrategy()` da LoopZero (mesma ordem de parâmetros). Retorna `*RetryStrategy` populado com `RetryPolicy: "OnFailure"`, `Backoff` montado e expressão skip-OOM (`asInt(lastRetry.exitCode) != 137`). |
+| **Rationale** | KISS (cita `~/.claude/CLAUDE.md §10` e `.claude/rules/clean-code.md §Function size`). Factory de 1 chamada é mais simples que builder com 4 métodos. LoopZero já validou o shape em produção (5 sites consumidores). Skip-OOM expression é convenção razoável; consumidores que querem outro behavior podem ainda usar `&RetryStrategy{...}` literal. |
 | **Alternativas** | (a) Builder fluente `forge.Retry().OnFailure(limit).Backoff(initial, factor, max).SkipOOM().Build()` — overengineering para 1 caso de uso; YAGNI (rejeitada). (b) Variádicas com options pattern `NewRetryOnFailure(limit, opts ...RetryOpt)` — adiciona indireção sem ganho para 4 parâmetros estáveis (rejeitada). (c) **Chosen**: factory direta. |
-| **Consequences** | Habilita: Theo (e outros consumidores) eliminam 14 linhas de função+ducplicação. Constrange: a expressão skip-OOM vira parte do "default" — consumidores com semântica diferente precisam usar struct literal (documentado). |
+| **Consequences** | Habilita: LoopZero (e outros consumidores) eliminam 14 linhas de função+ducplicação. Constrange: a expressão skip-OOM vira parte do "default" — consumidores com semântica diferente precisam usar struct literal (documentado). |
 
 ### ADR-002 — Resources presets são funções `()` retornando `*ResourceRequirements`, não constantes
 
@@ -62,14 +62,14 @@ Goals específicos e mensuráveis:
 | **Alternativas** | (a) Constants exportadas — risco de aliasing mutável (rejeitada por DRY/safety). (b) `Resources(preset string)` com enum — typo-prone (rejeitada). (c) Single `Resources(preset ResourceSize)` typed enum — adiciona um type para 3 valores; YAGNI (rejeitada). (d) **Chosen**: 3 factory functions independentes. |
 | **Consequences** | Habilita: presets reutilizáveis sem risco de mutação cruzada. Constrange: 3 funções em vez de 1 — mas trivial e auto-documentado. Sizes podem ser ajustados internamente sem breaking change. |
 
-### ADR-003 — Theo trocará helpers APÓS forge release tag estável
+### ADR-003 — LoopZero trocará helpers APÓS forge release tag estável
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | D3 |
-| **Decisão** | Sequência mandatória: (1) PR forge merge → main + tag `v0.5.1`; (2) PR Theo bump go.mod para `v0.5.1` E migra helpers no MESMO PR. PR Theo NÃO usa pseudo-version. |
-| **Rationale** | `.claude/rules/dependencies.md §When adding a new dependency is allowed` — pseudo-versions são frágeis (não-reproduzíveis em CI sem rebaixamento). Tag estável evita "trabalha na minha máquina". Sequência também garante reverter Theo é trivial (revert do bump + dos call sites). |
-| **Alternativas** | (a) Theo bumpa direto via pseudo-version pós-merge — mais rápido mas dívida do tag pendente (rejeitada). (b) Single mega-PR com forge + Theo em uma branch fictícia — viola separação de repos (rejeitada). (c) **Chosen**: 2 PRs, ordem rígida. |
+| **Decisão** | Sequência mandatória: (1) PR forge merge → main + tag `v0.5.1`; (2) PR LoopZero bump go.mod para `v0.5.1` E migra helpers no MESMO PR. PR LoopZero NÃO usa pseudo-version. |
+| **Rationale** | `.claude/rules/dependencies.md §When adding a new dependency is allowed` — pseudo-versions são frágeis (não-reproduzíveis em CI sem rebaixamento). Tag estável evita "trabalha na minha máquina". Sequência também garante reverter LoopZero é trivial (revert do bump + dos call sites). |
+| **Alternativas** | (a) LoopZero bumpa direto via pseudo-version pós-merge — mais rápido mas dívida do tag pendente (rejeitada). (b) Single mega-PR com forge + LoopZero em uma branch fictícia — viola separação de repos (rejeitada). (c) **Chosen**: 2 PRs, ordem rígida. |
 | **Consequences** | Habilita: rastreabilidade limpa via SemVer. Constrange: 5-10 min entre os 2 PRs (aceitável). |
 
 ### ADR-004 — Backward compat: structs literais continuam suportados
@@ -78,9 +78,9 @@ Goals específicos e mensuráveis:
 |-------|-------|
 | **ID** | D4 |
 | **Decisão** | As 4 funções novas (`NewRetryOnFailure`, 3× `Resources*`) são **additive** — não removem nem deprecam APIs existentes. Outros consumidores podem continuar usando `&RetryStrategy{...}` e `&ResourceRequirements{...}` literais. |
-| **Rationale** | `~/.claude/CLAUDE.md §10` (KISS) e prática SemVer: minor release (v0.5.0 → v0.5.1) NÃO pode quebrar APIs. Forge é library pública — outros consumidores futuros podem ter requisitos de retry/resources diferentes da Theo. |
+| **Rationale** | `~/.claude/CLAUDE.md §10` (KISS) e prática SemVer: minor release (v0.5.0 → v0.5.1) NÃO pode quebrar APIs. Forge é library pública — outros consumidores futuros podem ter requisitos de retry/resources diferentes da LoopZero. |
 | **Alternativas** | (a) Deprecar struct literal `RetryStrategy{...}` forçando todo mundo via factory — over-prescriptive (rejeitada). (b) **Chosen**: aditivo, retrocompatível 100%. |
-| **Consequences** | Habilita: zero risco de regressão em consumidores não-Theo. Constrange: existe agora "two ways to do it" — mitigado via godoc em `RetryStrategy` apontando para `NewRetryOnFailure` quando aplicável. |
+| **Consequences** | Habilita: zero risco de regressão em consumidores não-LoopZero. Constrange: existe agora "two ways to do it" — mitigado via godoc em `RetryStrategy` apontando para `NewRetryOnFailure` quando aplicável. |
 
 ### ADR-005 — Testes obrigatórios: factory + golden YAML
 
@@ -88,14 +88,14 @@ Goals específicos e mensuráveis:
 |-------|-------|
 | **ID** | D5 |
 | **Decisão** | Cada nova função no forge ganha: (1) teste unitário table-driven validando struct retornada; (2) golden test marshalando o `*ResourceRequirements`/`*RetryStrategy` para YAML e comparando com fixture pré-aprovada. Garante que o output wire-format é o esperado. |
-| **Rationale** | `.claude/rules/testing.md §Regression-first + Table-driven` exige TDD. Golden test prova que factory produz YAML idêntico ao struct literal — facilita migração da Theo (assertion ponta a ponta). |
+| **Rationale** | `.claude/rules/testing.md §Regression-first + Table-driven` exige TDD. Golden test prova que factory produz YAML idêntico ao struct literal — facilita migração da LoopZero (assertion ponta a ponta). |
 | **Alternativas** | (a) Apenas testes de struct — não pega regressão de tag/serialização (rejeitada). (b) **Chosen**: struct + golden YAML. |
 | **Consequences** | Habilita: confiança alta na migração. Constrange: ~80 LoC de testes adicionais (aceitável). |
 
 ## Dependency Graph
 
 ```
-Phase 1 (forge code) ─────▶ Phase 2 (forge release v0.5.1) ─────▶ Phase 3 (Theo migration)
+Phase 1 (forge code) ─────▶ Phase 2 (forge release v0.5.1) ─────▶ Phase 3 (LoopZero migration)
        │                              │                                    │
        ▼                              ▼                                    ▼
    T1.1 NewRetryOnFailure          T2.1 tag v0.5.1                T3.1 bump go.mod
@@ -106,7 +106,7 @@ Phase 1 (forge code) ─────▶ Phase 2 (forge release v0.5.1) ───
                                                                     ▼
                                                             Phase 4 (Dogfood QA)
                                                             T4.1 make verify forge
-                                                            T4.2 go test Theo
+                                                            T4.2 go test LoopZero
                                                             T4.3 forge E2E v4.0.3
 ```
 
@@ -124,8 +124,8 @@ Phase 1 tasks T1.1, T1.2, T1.3 podem rodar em paralelo (arquivos independentes).
 Adicionar função pública `NewRetryOnFailure(limit int, initial, factor, maxDuration string) *RetryStrategy` em arquivo dedicado, com expressão skip-OOM embutida.
 
 #### Evidence
-- Theo `api/internal/argo/languages.go:535-549` define exatamente esta função internamente
-- 5+ call sites na Theo (delivery, syft, cosign keybased, cosign keyless, harbor-mirror) consomem
+- LoopZero `api/internal/argo/languages.go:535-549` define exatamente esta função internamente
+- 5+ call sites na LoopZero (delivery, syft, cosign keybased, cosign keyless, harbor-mirror) consomem
 - ADR-001 (este plano)
 
 #### Files to edit
@@ -144,7 +144,7 @@ parameter_test.go — adicionar TestNewRetryOnFailure_* table-driven (RED antes 
 
 #### Deep Dives
 
-- **Assinatura**: `func NewRetryOnFailure(limit int, initial, factor, maxDuration string) *RetryStrategy`. Parâmetros ordenados como em Theo (limit, initial-duration, factor, max-duration) para compatibilidade de leitura. Retorna `*RetryStrategy` (não value) porque o campo consumer (`Workflow.RetryStrategy`/`Container.RetryStrategy`) é `*RetryStrategy`.
+- **Assinatura**: `func NewRetryOnFailure(limit int, initial, factor, maxDuration string) *RetryStrategy`. Parâmetros ordenados como em LoopZero (limit, initial-duration, factor, max-duration) para compatibilidade de leitura. Retorna `*RetryStrategy` (não value) porque o campo consumer (`Workflow.RetryStrategy`/`Container.RetryStrategy`) é `*RetryStrategy`.
 - **Default policy**: `RetryPolicy: "OnFailure"` hardcoded — refletido no nome da factory.
 - **Skip-OOM expression**: `asInt(lastRetry.exitCode) != 137` — exit 137 é SIGKILL via OOM. Argo expression DSL. Aceito como default razoável; documentar em godoc.
 - **Edge cases**:
@@ -192,7 +192,7 @@ VERIFY:  go test -count=1 -race ./... && make verify
 - [ ] Tarefas 1–6 concluídas.
 - [ ] Testes verdes.
 - [ ] `make verify` ALL QUALITY GATES PASSED.
-- [ ] Godoc renderiza limpo (`go doc github.com/usetheodev/theo-forge`).
+- [ ] Godoc renderiza limpo (`go doc github.com/getloopscale/argo-workflows-go`).
 - [ ] Backward compat: tests existentes do `RetryStrategy{...}` struct literal continuam passando.
 
 ---
@@ -205,8 +205,8 @@ Adicionar 3 factories: `ResourcesTiny()`, `ResourcesSmall()`, `ResourcesMedium()
 
 #### Evidence
 
-- Theo `api/internal/argo/languages.go:551-570` define exatamente estes 3 presets internamente.
-- Consumidos em ~6 sites na Theo.
+- LoopZero `api/internal/argo/languages.go:551-570` define exatamente estes 3 presets internamente.
+- Consumidos em ~6 sites na LoopZero.
 - ADR-002 (este plano).
 
 #### Files to edit
@@ -225,7 +225,7 @@ types_test.go — novo arquivo: testes table-driven dos 3 presets + golden YAML
 
 #### Deep Dives
 
-- **Valores T-shirt** (espelham Theo exatamente):
+- **Valores T-shirt** (espelham LoopZero exatamente):
   - Tiny: requests CPU 50m / Memory 32Mi; limits CPU 100m / Memory 64Mi.
   - Small: requests 100m / 128Mi; limits 500m / 256Mi.
   - Medium: requests 500m / 512Mi; limits 2000m / 2Gi.
@@ -313,7 +313,7 @@ types.go — godoc de ResourceRequirements menciona os 3 presets
 ```
 RED:     N/A (mudança puramente documental).
 GREEN:   Editar CHANGELOG e godocs.
-VERIFY:  go doc github.com/usetheodev/theo-forge | grep -E "NewRetryOnFailure|ResourcesTiny|ResourcesSmall|ResourcesMedium"
+VERIFY:  go doc github.com/getloopscale/argo-workflows-go | grep -E "NewRetryOnFailure|ResourcesTiny|ResourcesSmall|ResourcesMedium"
          confirma os 4 símbolos aparecem.
          grep "NewRetryOnFailure" parameter.go confirma cross-ref no godoc.
 ```
@@ -335,7 +335,7 @@ VERIFY:  go doc github.com/usetheodev/theo-forge | grep -E "NewRetryOnFailure|Re
 
 ## Phase 2: Forge release v0.5.1
 
-**Objective:** Cortar tag `v0.5.1` estável + GitHub release com notas; preparar consumidor (Theo) para bump.
+**Objective:** Cortar tag `v0.5.1` estável + GitHub release com notas; preparar consumidor (LoopZero) para bump.
 
 ### T2.1 — PR no forge: merge para main + tag v0.5.1
 
@@ -345,7 +345,7 @@ Abrir PR no forge consolidando Phase 1, merge após review, tag `v0.5.1`, push d
 
 #### Evidence
 
-- ADR-003 (este plano) — Theo NÃO bumpa antes do tag estável.
+- ADR-003 (este plano) — LoopZero NÃO bumpa antes do tag estável.
 - `.claude/rules/dependencies.md` exige pinning estável para reprodutibilidade.
 
 #### Files to edit
@@ -357,7 +357,7 @@ Abrir PR no forge consolidando Phase 1, merge após review, tag `v0.5.1`, push d
 Comandos:
 
 ```bash
-cd /home/paulo/theo-forge
+cd /home/paulo/loopzero-forge
 git checkout -b feat/retry-resources-factories main
 # (Phase 1 já committado nesta branch)
 git push -u origin feat/retry-resources-factories
@@ -396,7 +396,7 @@ N/A — operação git/release.
 ```
 RED:     N/A (release operation).
 GREEN:   Tag pushed, release published.
-VERIFY:  go list -m github.com/usetheodev/theo-forge@v0.5.1 resolve sem erro.
+VERIFY:  go list -m github.com/getloopscale/argo-workflows-go@v0.5.1 resolve sem erro.
          gh release view v0.5.1 mostra notas.
 ```
 
@@ -405,7 +405,7 @@ VERIFY:  go list -m github.com/usetheodev/theo-forge@v0.5.1 resolve sem erro.
 - [ ] PR aprovado e merged em `main`.
 - [ ] Tag `v0.5.1` anotado e pushed.
 - [ ] GitHub release publicado com notas.
-- [ ] `go list -m github.com/usetheodev/theo-forge@v0.5.1` retorna sem erro.
+- [ ] `go list -m github.com/getloopscale/argo-workflows-go@v0.5.1` retorna sem erro.
 - [ ] CHANGELOG `[0.5.1]` carimbado com data.
 
 #### DoD
@@ -416,17 +416,17 @@ VERIFY:  go list -m github.com/usetheodev/theo-forge@v0.5.1 resolve sem erro.
 
 ---
 
-## Phase 3: Theo PR — migrar 3 helpers para forge
+## Phase 3: LoopZero PR — migrar 3 helpers para forge
 
-**Objective:** PR no `/home/paulo/theo` que bumpa forge para v0.5.1 e substitui `ptr`, `retryStrategy`, `resourcesTiny/Small/Medium` por funções do forge. Zero comportamento alterado.
+**Objective:** PR no `/home/paulo/loopzero` que bumpa forge para v0.5.1 e substitui `ptr`, `retryStrategy`, `resourcesTiny/Small/Medium` por funções do forge. Zero comportamento alterado.
 
-Trabalho realizado em worktree isolado `/home/paulo/theo-script-pr` (já existente) ou novo worktree para evitar conflito com outro agente em `develop`.
+Trabalho realizado em worktree isolado `/home/paulo/loopzero-script-pr` (já existente) ou novo worktree para evitar conflito com outro agente em `develop`.
 
 ### T3.1 — Bump forge para v0.5.1
 
 #### Objective
 
-Atualizar `api/go.mod` para `github.com/usetheodev/theo-forge v0.5.1` e validar build + suite.
+Atualizar `api/go.mod` para `github.com/getloopscale/argo-workflows-go v0.5.1` e validar build + suite.
 
 #### Evidence
 
@@ -436,12 +436,12 @@ Atualizar `api/go.mod` para `github.com/usetheodev/theo-forge v0.5.1` e validar 
 #### Files to edit
 
 ```
-/home/paulo/theo-script-pr/api/go.mod — bump
-/home/paulo/theo-script-pr/api/go.sum — atualizado por go get
-/home/paulo/theo-script-pr/go.work.sum — atualizado por go work sync
+/home/paulo/loopzero-script-pr/api/go.mod — bump
+/home/paulo/loopzero-script-pr/api/go.sum — atualizado por go get
+/home/paulo/loopzero-script-pr/go.work.sum — atualizado por go work sync
 ```
 
-(Caminhos no worktree isolado; o outro agente continua em `/home/paulo/theo` sem interferência.)
+(Caminhos no worktree isolado; o outro agente continua em `/home/paulo/loopzero` sem interferência.)
 
 #### Deep file dependency analysis
 
@@ -453,16 +453,16 @@ Atualizar `api/go.mod` para `github.com/usetheodev/theo-forge v0.5.1` e validar 
 #### Deep Dives
 
 - **Possível conflito `genproto`**: já resolvido no PR atual (`chore/forge-script-migration` commit `b23bf231`). Se ainda não foi merged em develop, este PR depende dele OU re-aplica a mesma técnica.
-- **Backward compat**: forge v0.5.1 é additive sobre v0.5.0; todos os símbolos usados pela Theo continuam funcionando.
+- **Backward compat**: forge v0.5.1 é additive sobre v0.5.0; todos os símbolos usados pela LoopZero continuam funcionando.
 
 #### Tasks
 
 1. **EC-2 — Refresh do worktree antes de qualquer mudança**:
-   `cd /home/paulo/theo-script-pr && git fetch origin && git rebase origin/develop` (resolve qualquer divergência com o outro agente trabalhando em `develop`; se conflito, parar e escalar antes de prosseguir).
-2. `cd /home/paulo/theo-script-pr/api`
-3. `go get github.com/usetheodev/theo-forge@v0.5.1`
+   `cd /home/paulo/loopzero-script-pr && git fetch origin && git rebase origin/develop` (resolve qualquer divergência com o outro agente trabalhando em `develop`; se conflito, parar e escalar antes de prosseguir).
+2. `cd /home/paulo/loopzero-script-pr/api`
+3. `go get github.com/getloopscale/argo-workflows-go@v0.5.1`
 4. `go mod tidy`
-5. `cd /home/paulo/theo-script-pr && go work sync`
+5. `cd /home/paulo/loopzero-script-pr && go work sync`
 6. `cd api && go build ./...` (must succeed)
 7. `go test -count=1 ./internal/argo/...` (must pass)
 
@@ -471,13 +471,13 @@ Atualizar `api/go.mod` para `github.com/usetheodev/theo-forge v0.5.1` e validar 
 ```
 RED:     N/A (bump deps).
 GREEN:   Build + test pass com nova versão.
-VERIFY:  grep "theo-forge v0.5.1" api/go.mod
+VERIFY:  grep "loopzero-forge v0.5.1" api/go.mod
          go test ./... 37/37 PASS.
 ```
 
 #### Acceptance Criteria
 
-- [ ] `api/go.mod` mostra `github.com/usetheodev/theo-forge v0.5.1` (tag estável, sem pseudo).
+- [ ] `api/go.mod` mostra `github.com/getloopscale/argo-workflows-go v0.5.1` (tag estável, sem pseudo).
 - [ ] `go build ./...` PASS para todos os módulos do workspace.
 - [ ] `go test -count=1 ./internal/argo/...` PASS.
 - [ ] Pass: zero novas warnings de lint.
@@ -485,11 +485,11 @@ VERIFY:  grep "theo-forge v0.5.1" api/go.mod
 #### DoD
 
 - [ ] Tarefas 1–6 concluídas.
-- [ ] Suite Theo continua 37/37 PASS.
+- [ ] Suite LoopZero continua 37/37 PASS.
 
 ---
 
-### T3.2 — Migrar `ptr` → `forge.Ptr` na Theo
+### T3.2 — Migrar `ptr` → `forge.Ptr` na LoopZero
 
 #### Objective
 
@@ -498,7 +498,7 @@ Deletar a função `ptr[T any]` em `api/internal/argo/helpers.go:18` e atualizar
 #### Evidence
 
 - Auditoria sessão atual: `forge.Ptr` exporta `func Ptr[T any](v T) *T` idêntico.
-- Theo `helpers.go:18` define função privada equivalente.
+- LoopZero `helpers.go:18` define função privada equivalente.
 
 #### Files to edit
 
@@ -549,7 +549,7 @@ VERIFY:  go test -count=1 -race ./internal/argo/...
 - [ ] Função `ptr` em `helpers.go` deletada.
 - [ ] Todos os call sites usam `forge.Ptr`.
 - [ ] `grep "\bptr(" api/internal/argo/ | grep -v "_test.go"` retorna 0 matches (exceto false positives nomeados como `ptr` mas que não são a função).
-- [ ] Suite Theo 37/37 PASS.
+- [ ] Suite LoopZero 37/37 PASS.
 - [ ] `go vet ./...` clean.
 
 #### DoD
@@ -568,7 +568,7 @@ Deletar `retryStrategy(limit, duration, factor, maxDuration string) *forge.Retry
 #### Evidence
 
 - ADR-001 (este plano) — `forge.NewRetryOnFailure` tem assinatura idêntica.
-- 5 call sites na Theo.
+- 5 call sites na LoopZero.
 
 #### Files to edit
 
@@ -588,7 +588,7 @@ api/internal/argo/harbor_mirror.go — idem
 
 #### Deep Dives
 
-- **Expressão skip-OOM hardcoded**: Theo `retryStrategy` embute `asInt(lastRetry.exitCode) != 137`. `forge.NewRetryOnFailure` faz idem (ADR-001). Migração mantém semântica.
+- **Expressão skip-OOM hardcoded**: LoopZero `retryStrategy` embute `asInt(lastRetry.exitCode) != 137`. `forge.NewRetryOnFailure` faz idem (ADR-001). Migração mantém semântica.
 - **Side effects**: nenhum — função pura, retorna struct fresh.
 
 #### Tasks
@@ -614,7 +614,7 @@ VERIFY:  go test -count=1 -race ./internal/argo/...
 
 - [ ] Função `retryStrategy` deletada.
 - [ ] Todos os call sites usam `forge.NewRetryOnFailure`.
-- [ ] Suite Theo PASS.
+- [ ] Suite LoopZero PASS.
 - [ ] YAML emitido inalterado (validar via test que compara golden Workflow).
 
 #### DoD
@@ -633,7 +633,7 @@ Deletar as 3 funções `resourcesTiny/Small/Medium` em `languages.go:551-570` e 
 #### Evidence
 
 - ADR-002 (este plano) — assinatura idêntica.
-- 6+ call sites na Theo.
+- 6+ call sites na LoopZero.
 
 #### Files to edit
 
@@ -673,7 +673,7 @@ VERIFY:  go test -count=1 -race ./internal/argo/...
 
 - [ ] 3 funções deletadas em `languages.go`.
 - [ ] Call sites migrados para `forge.Resources*`.
-- [ ] Suite Theo PASS.
+- [ ] Suite LoopZero PASS.
 
 #### DoD
 
@@ -681,7 +681,7 @@ VERIFY:  go test -count=1 -race ./internal/argo/...
 
 ---
 
-### T3.5 — Commit + push + abrir PR Theo
+### T3.5 — Commit + push + abrir PR LoopZero
 
 #### Objective
 
@@ -689,7 +689,7 @@ Criar 2 commits (bump + migração), push branch, abrir PR `develop` ← `chore/
 
 #### Evidence
 
-- ADR-003 — sequência: forge ship → Theo bump+migrate.
+- ADR-003 — sequência: forge ship → LoopZero bump+migrate.
 
 #### Files to edit
 
@@ -698,7 +698,7 @@ N/A — operações git.
 #### Tasks
 
 1. Verificar `git status` no worktree isolado.
-2. `git add api/go.mod api/go.sum go.work.sum` + commit `chore(api): bump theo-forge to v0.5.1`.
+2. `git add api/go.mod api/go.sum go.work.sum` + commit `chore(api): bump loopzero-forge to v0.5.1`.
 3. `git add api/internal/argo/` + commit `refactor(argo): use forge.Ptr/NewRetryOnFailure/Resources presets (eliminate 4 duplicate helpers)`.
 4. `git push -u origin chore/use-forge-helpers`.
 5. `gh pr create --base develop --title "..." --body "..."` (referenciando este plano + ADR-001/002/003).
@@ -732,7 +732,7 @@ Confirmar que o forge `main` pós-v0.5.1 passa ALL QUALITY GATES.
 
 #### Tasks
 
-1. `cd /home/paulo/theo-forge && git checkout main && git pull`
+1. `cd /home/paulo/loopzero-forge && git checkout main && git pull`
 2. `make verify`
 3. Confirmar saída `==> ✅ verify: ALL QUALITY GATES PASSED`.
 
@@ -748,15 +748,15 @@ Confirmar que o forge `main` pós-v0.5.1 passa ALL QUALITY GATES.
 
 ---
 
-### T4.2 — Suite full Theo
+### T4.2 — Suite full LoopZero
 
 #### Objective
 
-Confirmar que Theo `chore/use-forge-helpers` branch passa `go test ./...` 37/37.
+Confirmar que LoopZero `chore/use-forge-helpers` branch passa `go test ./...` 37/37.
 
 #### Tasks
 
-1. `cd /home/paulo/theo-script-pr/api && go test -count=1 ./...`
+1. `cd /home/paulo/loopzero-script-pr/api && go test -count=1 ./...`
 2. Contar `ok` lines (esperado 37) e `FAIL` (esperado 0).
 
 #### Acceptance Criteria
@@ -774,18 +774,18 @@ Confirmar que Theo `chore/use-forge-helpers` branch passa `go test ./...` 37/37.
 
 #### Objective
 
-Re-rodar os 19 testes E2E do forge contra Argo Workflows v4.0.3 (versão de produção Theo) para garantir que as novas factories não introduziram regressão sutil.
+Re-rodar os 19 testes E2E do forge contra Argo Workflows v4.0.3 (versão de produção LoopZero) para garantir que as novas factories não introduziram regressão sutil.
 
 #### Tasks
 
-1. `cd /home/paulo/theo-forge && make e2e-up`
+1. `cd /home/paulo/loopzero-forge && make e2e-up`
 2. `make e2e` (executa 19 tests, ~6 min)
 3. `make e2e-down` (cleanup)
 
 #### Acceptance Criteria
 
 - [ ] 19/19 E2E PASS contra Argo v4.0.3.
-- [ ] Output contém `ok github.com/usetheodev/theo-forge/e2e <duration>`.
+- [ ] Output contém `ok github.com/getloopscale/argo-workflows-go/e2e <duration>`.
 
 #### DoD
 
@@ -798,15 +798,15 @@ Re-rodar os 19 testes E2E do forge contra Argo Workflows v4.0.3 (versão de prod
 
 | # | Requirement / Gap | Task(s) | Resolution |
 |---|---|---|---|
-| 1 | Duplicação `Theo.ptr` ↔ `forge.Ptr` | T3.2 | Theo deleta `ptr`, usa `forge.Ptr` |
-| 2 | Forge não tem retry factory; Theo reinventou | T1.1 + T3.3 | Forge adiciona `NewRetryOnFailure`; Theo migra |
-| 3 | Forge não tem resource presets; Theo reinventou 3 | T1.2 + T3.4 | Forge adiciona 3 factories; Theo migra |
+| 1 | Duplicação `LoopZero.ptr` ↔ `forge.Ptr` | T3.2 | LoopZero deleta `ptr`, usa `forge.Ptr` |
+| 2 | Forge não tem retry factory; LoopZero reinventou | T1.1 + T3.3 | Forge adiciona `NewRetryOnFailure`; LoopZero migra |
+| 3 | Forge não tem resource presets; LoopZero reinventou 3 | T1.2 + T3.4 | Forge adiciona 3 factories; LoopZero migra |
 | 4 | Documentação cruzada para evitar "two ways to do it" | T1.3 | Godocs apontam factories como atalho para structs |
 | 5 | Release estável obrigatório antes do consumo | T2.1 | Tag v0.5.1 + GitHub release |
 | 6 | Backward compat para outros consumidores forge | ADR-004 + T1.1/T1.2 | Mudanças aditivas; struct literais intactos |
-| 7 | Validação ponta-a-ponta sem regressão | T4.1/T4.2/T4.3 | make verify forge + go test Theo + 19 E2E |
+| 7 | Validação ponta-a-ponta sem regressão | T4.1/T4.2/T4.3 | make verify forge + go test LoopZero + 19 E2E |
 | 8 | Cobertura testes nas novas factories ≥80% | T1.1/T1.2 TDD blocks | 11 testes + 3 golden YAMLs |
-| 9 | Zero conflito com outro agente em develop | T3.1 | Worktree separado `/home/paulo/theo-script-pr` + EC-2 fetch+rebase antes de tocar |
+| 9 | Zero conflito com outro agente em develop | T3.1 | Worktree separado `/home/paulo/loopzero-script-pr` + EC-2 fetch+rebase antes de tocar |
 | 10 | Rastreabilidade no CHANGELOG | T1.3 + T2.1 | Entries em `[Unreleased]` promovidos a `[0.5.1]` |
 
 **Coverage: 10/10 gaps covered (100%)**
@@ -815,12 +815,12 @@ Re-rodar os 19 testes E2E do forge contra Argo Workflows v4.0.3 (versão de prod
 
 - [ ] Todas as Phases 1–4 concluídas.
 - [ ] Forge `make verify` ALL QUALITY GATES PASSED após v0.5.1.
-- [ ] Theo `go test ./...` 37/37 PASS após migração.
+- [ ] LoopZero `go test ./...` 37/37 PASS após migração.
 - [ ] Forge 19/19 E2E PASS contra Argo v4.0.3.
 - [ ] Zero clippy/lint warnings em ambos repos.
 - [ ] Backward compat: nenhum consumidor antigo do forge (que use struct literal) quebra — validado em CI do forge.
 - [ ] PR forge merged + tag v0.5.1 publicado.
-- [ ] PR Theo aberto contra `develop` (await maintainer merge — fora do escopo deste plano).
+- [ ] PR LoopZero aberto contra `develop` (await maintainer merge — fora do escopo deste plano).
 - [ ] CHANGELOG forge promovido `[Unreleased]` → `[0.5.1] - YYYY-MM-DD`.
 - [ ] Plano de migração documentado no PR body de ambos repos referenciando este arquivo.
 - [ ] **Dogfood QA PASS** — `/dogfood full` no forge ≥70 health, zero CRITICAL.
@@ -833,7 +833,7 @@ Re-rodar os 19 testes E2E do forge contra Argo Workflows v4.0.3 (versão de prod
 ### Execution
 
 ```bash
-cd /home/paulo/theo-forge && /dogfood full
+cd /home/paulo/loopzero-forge && /dogfood full
 ```
 
 (Se `/dogfood` skill não estiver disponível no forge, usar substituto: `make verify && make e2e` como proxy de "dogfood" — ambos exercitam a biblioteca como um usuário real consumindo.)
@@ -861,7 +861,7 @@ Absorvidos 4 MUST FIX de `/edge-case-plan` em `.claude/knowledge-base/reviews/ed
 | EC | Tarefa afetada | Família | Mudança |
 |----|---------------|---------|---------|
 | EC-1 | T1.1, T1.3, T3.3, ADR-001, CHANGELOG, Coverage Matrix | Naming | `RetryOnFailure` (factory) **colidiria** com const `RetryOnFailure` em `types.go:112` (re-export de `model.RetryOnFailure`). Renomeado para **`NewRetryOnFailure`** em todo o plano. Idiomatic Go: `New<Type>` prefix sinaliza factory. |
-| EC-2 | T3.1 | Concurrency | Adicionado passo 1: `git fetch && git rebase origin/develop` antes de tocar o worktree Theo. Evita conflito com outro agente em `develop`. |
+| EC-2 | T3.1 | Concurrency | Adicionado passo 1: `git fetch && git rebase origin/develop` antes de tocar o worktree LoopZero. Evita conflito com outro agente em `develop`. |
 | EC-3 | T1.2 Deep Dives + TDD | State / Aliasing | Garantia explícita de alocação fresh INCLUSIVE de campos internos (maps/slices futuros); novo teste `TestResourcesTiny_MutationIsolation` que valida 2 instâncias não compartilham estado mutável. |
 | EC-4 | T1.1 Tasks + T4.1 | Coverage gate | Baseline coverage snapshot ANTES da edição; gate "≥ baseline" pós-edição. Plus: aproveitar PR para cobrir `Backoff.Factor` float64/`*float64` cases já no `review.db` como TODO (-1 finding ao mesmo tempo). |
 

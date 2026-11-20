@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	forge "github.com/usetheodev/theo-forge"
-	"github.com/usetheodev/theo-forge/model"
+	forge "github.com/getloopscale/argo-workflows-go"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // TestE2E_ClientLifecycle exercises the REST client end-to-end against

@@ -1,10 +1,10 @@
-# CRD Parity Matrix — theo-forge
+# CRD Parity Matrix — loopzero-forge
 
 This document records which `WorkflowSpec` fields each builder type
 exposes. (T8.1 / arch-workflow-template-incomplete-api-surface)
 
 Argo Workflows defines four CRD types that share the underlying
-`WorkflowSpec`. theo-forge models each separately as a Go struct.
+`WorkflowSpec`. loopzero-forge models each separately as a Go struct.
 Some `WorkflowSpec` fields are intentionally omitted from the smaller
 template types where they would be no-ops at runtime.
 

@@ -54,13 +54,13 @@ Phase 7 dogfooded the SDK from a new-user perspective, audited the test suite st
 
 | Package | Coverage | Gap |
 |---|---|---|
-| `github.com/usetheodev/theo-forge` (root) | **93.6%** | Minor gaps in volume, workflow argument builders |
-| `github.com/usetheodev/theo-forge/client` | **31.0%** | CreateWorkflow, GetWorkflow, DeleteWorkflow, ListWorkflows, LintWorkflow, GetInfo, GetVersion — all 0% |
-| `github.com/usetheodev/theo-forge/config` | **0.0%** | Entire hook system untested |
-| `github.com/usetheodev/theo-forge/expr` | **0.0%** | Expression builder, injection-prone C() — untested |
-| `github.com/usetheodev/theo-forge/model` | **0.0%** | No test files |
-| `github.com/usetheodev/theo-forge/serialize` | **0.0%** | YAML serialization pipeline — untested |
-| `github.com/usetheodev/theo-forge/validate` | **0.0%** | Unit validation — untested |
+| `github.com/getloopscale/argo-workflows-go` (root) | **93.6%** | Minor gaps in volume, workflow argument builders |
+| `github.com/getloopscale/argo-workflows-go/client` | **31.0%** | CreateWorkflow, GetWorkflow, DeleteWorkflow, ListWorkflows, LintWorkflow, GetInfo, GetVersion — all 0% |
+| `github.com/getloopscale/argo-workflows-go/config` | **0.0%** | Entire hook system untested |
+| `github.com/getloopscale/argo-workflows-go/expr` | **0.0%** | Expression builder, injection-prone C() — untested |
+| `github.com/getloopscale/argo-workflows-go/model` | **0.0%** | No test files |
+| `github.com/getloopscale/argo-workflows-go/serialize` | **0.0%** | YAML serialization pipeline — untested |
+| `github.com/getloopscale/argo-workflows-go/validate` | **0.0%** | Unit validation — untested |
 | **Total** | **63.1%** | |
 
 ### Test Quality Observations

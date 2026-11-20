@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/config"
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/config"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // T3.3 — Template/TemplateRef/Inline mutual exclusion (code-p4-template-ref-mutual-exclusion).

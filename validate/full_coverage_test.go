@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // Coverage backfill round 2: hit every branch of ResourceRequirements +
