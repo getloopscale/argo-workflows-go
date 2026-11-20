@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 - **BREAKING: the module path is now `github.com/getloopscale/argo-workflows-go`.** It matches the repository that hosts the module. Consumers change their import paths and their `require` line.
 - The minimum Go version is now 1.26.10, up from 1.25.10. Go 1.25.14, the last 1.25 release, still carries 10 standard library vulnerabilities reachable from loopzero-forge, and their fixes only exist from 1.26.10. (#26)
+- The minimum Go version is now 1.26.11. Go 1.26.10 carries GO-2026-6859, an HTTP/1 server crash in `net/http`, fixed in 1.26.11.
 
 ## [0.7.0] - 2026-11-06
 

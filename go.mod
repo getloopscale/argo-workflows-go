@@ -4,7 +4,7 @@ module github.com/getloopscale/argo-workflows-go
 // call graph on Go 1.25.14, the last 1.25 release. None is fixed on the 1.25
 // line; the highest fixed-in version is 1.26.10 (crypto/x509 GO-2026-6809).
 // Require 1.26.10 to close them.
-go 1.26.10
+go 1.26.11
 
 require sigs.k8s.io/yaml v1.6.0
 
