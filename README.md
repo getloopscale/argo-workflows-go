@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://loopzero.example">
-    <img src="https://loopzero.example/logo.png" alt="LoopZero" height="80" />
+  <a href="https://getloopscale.com">
+    <img src="https://getloopscale.com/logo.png" alt="LoopZero" height="80" />
   </a>
 </p>
 
@@ -345,6 +345,6 @@ Please keep PRs focused — one feature or fix per PR.
 
 ## Community
 
-- Discord: https://discord.loopzero.example/
+- Discord: https://discord.getloopscale.com/
 - X: https://x.com/getloopscale
 - LinkedIn: https://linkedin.com/company/getloopscale
