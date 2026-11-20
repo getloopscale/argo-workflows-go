@@ -14,7 +14,7 @@ set -euo pipefail
 # https://github.com/argoproj/argo-workflows/releases
 #
 # Pinned to v4.0.3 because that is the appVersion shipped by argo-helm
-# chart 1.0.5, which Theo Cloud installs in production via ArgoCD
+# chart 1.0.5, which LoopZero Cloud installs in production via ArgoCD
 # (infra/argocd-bootstrap/apps/build-argo-workflows.yaml).
 # Bumping requires re-running `make e2e` to catch CRD/API drift.
 export ARGO_VERSION="${ARGO_VERSION:-v4.0.3}"
@@ -25,7 +25,7 @@ export KIND_VERSION="${KIND_VERSION:-v0.24.0}"
 export KIND_NODE_IMAGE="${KIND_NODE_IMAGE:-kindest/node:v1.31.0@sha256:53df588e04085fd41ae12de0c3fe4c72f7013bba32a20e7325357a1ac94ba865}"
 
 # kind cluster name — kept short to avoid hitting Linux interface-name limits.
-export KIND_CLUSTER="${KIND_CLUSTER:-theo-forge-e2e}"
+export KIND_CLUSTER="${KIND_CLUSTER:-loopzero-forge-e2e}"
 
 # Argo namespace inside the cluster.
 export ARGO_NAMESPACE="${ARGO_NAMESPACE:-argo}"

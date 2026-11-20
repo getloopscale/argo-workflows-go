@@ -44,7 +44,7 @@
 
 ### Dependency Analyzer (chief-reviewer acting)
 
-- Dependency graph fully documented at /home/paulo/theo-forge/review-output/analysis/dependency_graph.md
+- Dependency graph fully documented at /home/paulo/loopzero-forge/review-output/analysis/dependency_graph.md
 - Import matrix verified by manual grep of all package imports
 - No hidden transitive internal imports found
 

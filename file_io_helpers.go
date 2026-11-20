@@ -1,8 +1,8 @@
 package forge
 
 import (
-	"github.com/usetheodev/theo-forge/model"
-	"github.com/usetheodev/theo-forge/serialize"
+	"github.com/getloopscale/argo-workflows-go/model"
+	"github.com/getloopscale/argo-workflows-go/serialize"
 )
 
 // T4.2 — file I/O helpers split from helpers.go.

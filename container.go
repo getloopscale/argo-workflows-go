@@ -3,7 +3,7 @@ package forge
 import (
 	"fmt"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // Container represents an Argo Workflows container template.

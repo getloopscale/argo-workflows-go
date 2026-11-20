@@ -5,7 +5,7 @@ package config
 import (
 	"sync"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // PreBuildHook is a function that transforms a TemplateModel before submission.

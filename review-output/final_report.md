@@ -1,4 +1,4 @@
-# Deep Review Report: theo-forge
+# Deep Review Report: loopzero-forge
 
 **Generated:** 2026-05-20
 **Review phases completed:** 7/8 (Phase 8 = this report)
@@ -11,9 +11,9 @@
 
 ## 1. Executive Summary
 
-theo-forge is a Go SDK for constructing Argo Workflows programmatically. The codebase is well-structured at a high level — clean package boundaries, a consistent builder pattern, and a strong round-trip test suite against 194 upstream Argo YAML examples. The project shows engineering maturity in its approach to serialization and model design, and it has passed all quality gates (phases 3-7 each scored above the 0.70 threshold on the first iteration).
+loopzero-forge is a Go SDK for constructing Argo Workflows programmatically. The codebase is well-structured at a high level — clean package boundaries, a consistent builder pattern, and a strong round-trip test suite against 194 upstream Argo YAML examples. The project shows engineering maturity in its approach to serialization and model design, and it has passed all quality gates (phases 3-7 each scored above the 0.70 threshold on the first iteration).
 
-However, the review uncovered a set of user-facing correctness failures that make the SDK unreliable in its documented form today. The README quickstart contains multiple non-compiling code snippets. The NewConfig() API is documented as supporting hook isolation, but hooks registered on isolated instances are silently ignored at build time. The ToFile() path traversal vulnerability was confirmed live via execution, allowing writes outside the intended output directory. These are not theoretical concerns — they are observable defects that affect any developer following the documentation or any application that passes user-controlled values to the SDK.
+However, the review uncovered a set of user-facing correctness failures that make the SDK unreliable in its documented form today. The README quickstart contains multiple non-compiling code snippets. The NewConfig() API is documented as supporting hook isolation, but hooks registered on isolated instances are silently ignored at build time. The ToFile() path traversal vulnerability was confirmed live via execution, allowing writes outside the intended output directory. These are not loopzeroretical concerns — they are observable defects that affect any developer following the documentation or any application that passes user-controlled values to the SDK.
 
 There are zero CRITICAL findings, meaning no immediate production-down risk for users whose applications are already built and working. However, the SDK is broken in several user-facing ways that affect onboarding, correctness, and security. P1 remediation items address the non-compiling README examples, the NewConfig hook isolation contract, and the path traversal vulnerability — all of which can and should be fixed in a single focused patch release.
 
@@ -28,7 +28,7 @@ There are zero CRITICAL findings, meaning no immediate production-down risk for 
 
 ### Architecture
 
-theo-forge is a pure Go library (no executable) organized as a root package plus six sub-packages. The architecture follows a clean layered pattern:
+loopzero-forge is a pure Go library (no executable) organized as a root package plus six sub-packages. The architecture follows a clean layered pattern:
 
 ```
 Consumer Code
@@ -659,7 +659,7 @@ A prospective user who tries to follow the README beyond the first example will 
 
 | Package | Coverage | Test Files | Notes |
 |---------|----------|------------|-------|
-| `github.com/usetheodev/theo-forge` (root) | 93.6% | Yes | Strong unit + golden + round-trip |
+| `github.com/getloopscale/argo-workflows-go` (root) | 93.6% | Yes | Strong unit + golden + round-trip |
 | `client` | 31.0% | Yes | Core API methods uncovered |
 | `expr` | 0% | None | Security-critical — C() injection untested |
 | `config` | 0% | None | Hook dispatch correctness untested |

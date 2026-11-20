@@ -16,8 +16,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/usetheodev/theo-forge/client"
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/client"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // --- Environment ---
@@ -96,7 +96,7 @@ func requireEnv(t *testing.T) *e2eEnv {
 
 // --- Clients ---
 
-// argoClient returns a theo-forge REST client bound to the live argo-server.
+// argoClient returns a loopzero-forge REST client bound to the live argo-server.
 // VerifySSL=false because port-forward terminates TLS at localhost without
 // a valid cert in the test env.
 func argoClient(t *testing.T) *client.WorkflowsService {

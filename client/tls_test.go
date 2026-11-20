@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // T2.4 regression tests (SEC-004, code-p4-verifyssl-dead, completeness-h1-verifyssl)

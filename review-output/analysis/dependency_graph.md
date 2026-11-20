@@ -1,4 +1,4 @@
-# Dependency Graph — theo-forge
+# Dependency Graph — loopzero-forge
 
 **Date:** 2026-05-20
 **Phase:** 3 (Architecture Review)

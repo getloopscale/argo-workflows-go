@@ -9,40 +9,40 @@ import (
 	"strings"
 	"testing"
 
-	forge "github.com/usetheodev/theo-forge"
-	"github.com/usetheodev/theo-forge/model"
+	forge "github.com/getloopscale/argo-workflows-go"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // --------------------------------------------------------------------------
-// Theo-shape coverage — these tests mirror EXACTLY how /home/paulo/theo
+// LoopZero-shape coverage — these tests mirror EXACTLY how /home/paulo/loopzero
 // (api/internal/argo/workflow_builder.go) constructs Workflows.
 //
-// If any of these regress, Theo Cloud builds break in production. They are
-// the executable contract between forge and Theo.
+// If any of these regress, LoopZero Cloud builds break in production. They are
+// the executable contract between forge and LoopZero.
 // --------------------------------------------------------------------------
 
-// TestTheoShape_FullProductionWorkflow constructs a workflow that uses
-// every Theo-specific field at once and verifies each survives Build →
+// TestLoopZeroShape_FullProductionWorkflow constructs a workflow that uses
+// every LoopZero-specific field at once and verifies each survives Build →
 // CreateWorkflow → controller normalization → cluster-side YAML.
 //
-// Theo-shape inventory (from api/internal/argo/workflow_builder.go ~L221):
+// LoopZero-shape inventory (from api/internal/argo/workflow_builder.go ~L221):
 //
-//	GenerateName             "theo-build-{BuildID}-"
+//	GenerateName             "loopzero-build-{BuildID}-"
 //	Entrypoint, OnExit       (two DAGs)
-//	ServiceAccountName       "theo-build"
+//	ServiceAccountName       "loopzero-build"
 //	Parallelism              *int
 //	TTLStrategy              {AfterCompletion, AfterSuccess, AfterFailure}
 //	PodGC                    {Strategy:"OnPodCompletion", DeleteDelayDuration:"5m"}
 //	Labels                   {tenant, project, environment, build}
-//	Annotations              {"theo.io/correlation-id": ...}
+//	Annotations              {"loopzero.io/correlation-id": ...}
 //	VolumeClaimTemplates     [{Name, StorageClassName:"local-path", Size}]
 //	Volumes                  [SecretVolume, ConfigMapVolume]
 //	SecurityContext          {FSGroup, RunAsUser, RunAsGroup} all 1000
 //
 // Plus the default podAffinity injected by Build() because
 // VolumeClaimTemplates is non-empty (v0.4.0 / PR #12).
-func TestTheoShape_FullProductionWorkflow(t *testing.T) {
-	name := uniqueName("theo-shape")
+func TestLoopZeroShape_FullProductionWorkflow(t *testing.T) {
+	name := uniqueName("loopzero-shape")
 	cleanupWorkflow(t, name)
 
 	const (
@@ -56,9 +56,9 @@ func TestTheoShape_FullProductionWorkflow(t *testing.T) {
 
 	w := &forge.Workflow{
 		// We use Name (not GenerateName) so we can predict it for cleanup,
-		// but the FIELD set + serialization MUST be identical to Theo's
-		// GenerateName path. Theo's actual GenerateName usage is covered
-		// by TestTheoShape_GenerateName below.
+		// but the FIELD set + serialization MUST be identical to LoopZero's
+		// GenerateName path. LoopZero's actual GenerateName usage is covered
+		// by TestLoopZeroShape_GenerateName below.
 		Name:               name,
 		Entrypoint:         "main",
 		OnExit:             "cleanup",
@@ -74,18 +74,18 @@ func TestTheoShape_FullProductionWorkflow(t *testing.T) {
 			DeleteDelayDuration: "5m",
 		},
 		Labels: map[string]string{
-			"theo.io/tenant":      tenantID,
-			"theo.io/project":     projectID,
-			"theo.io/environment": environment,
-			"theo.io/build-id":    buildID,
+			"loopzero.io/tenant":      tenantID,
+			"loopzero.io/project":     projectID,
+			"loopzero.io/environment": environment,
+			"loopzero.io/build-id":    buildID,
 		},
 		Annotations: map[string]string{
-			"theo.io/correlation-id": correlationID,
+			"loopzero.io/correlation-id": correlationID,
 		},
 		VolumeClaimTemplates: []forge.PVCVolume{{
 			BaseVolume:       forge.BaseVolume{Name: "workspace"},
 			Size:             "100Mi",
-			StorageClassName: "standard", // kind default — for Theo it's "local-path"
+			StorageClassName: "standard", // kind default — for LoopZero it's "local-path"
 		}},
 		Volumes: []forge.VolumeBuilder{
 			forge.ConfigMapVolume{
@@ -103,7 +103,7 @@ func TestTheoShape_FullProductionWorkflow(t *testing.T) {
 				Name:    "main",
 				Image:   "alpine:3.18",
 				Command: []string{"sh", "-c"},
-				Args:    []string{"echo theo-shape && touch /workspace/marker"},
+				Args:    []string{"echo loopzero-shape && touch /workspace/marker"},
 				VolumeMounts: []forge.VolumeBuilder{
 					forge.PVCVolume{BaseVolume: forge.BaseVolume{Name: "workspace", MountPath: "/workspace"}},
 				},
@@ -143,12 +143,12 @@ func TestTheoShape_FullProductionWorkflow(t *testing.T) {
 	_ = waitWorkflowSucceeded(t, name, defaultWaitTimeout)
 
 	// Cluster-side asserts: pull manifest BACK and confirm controller
-	// did not strip any field. This is the "Theo Cloud will not fail"
+	// did not strip any field. This is the "LoopZero Cloud will not fail"
 	// guarantee — what we built is what runs.
 	manifest := dumpWorkflow(t, name)
 	mustContain := []string{
-		"theo.io/correlation-id",
-		"theo.io/tenant",
+		"loopzero.io/correlation-id",
+		"loopzero.io/tenant",
 		"strategy: OnPodCompletion",
 		"deleteDelayDuration: 5m",
 		"secondsAfterCompletion: 14400",
@@ -160,17 +160,17 @@ func TestTheoShape_FullProductionWorkflow(t *testing.T) {
 	}
 	for _, needle := range mustContain {
 		if !strings.Contains(manifest, needle) {
-			t.Errorf("cluster manifest missing %q — Theo-shape regression\n%s",
+			t.Errorf("cluster manifest missing %q — LoopZero-shape regression\n%s",
 				needle, manifest)
 		}
 	}
 }
 
-// TestTheoShape_GenerateName proves Theo's GenerateName pattern works.
-// Theo uses `theo-build-{BuildID}-` and Argo appends a random suffix.
+// TestLoopZeroShape_GenerateName proves LoopZero's GenerateName pattern works.
+// LoopZero uses `loopzero-build-{BuildID}-` and Argo appends a random suffix.
 // The SDK MUST omit Name and emit only generateName.
-func TestTheoShape_GenerateName(t *testing.T) {
-	prefix := fmt.Sprintf("theo-build-%s-", uniqueName("g")) // ends in -
+func TestLoopZeroShape_GenerateName(t *testing.T) {
+	prefix := fmt.Sprintf("loopzero-build-%s-", uniqueName("g")) // ends in -
 
 	w := &forge.Workflow{
 		GenerateName: prefix,
@@ -195,7 +195,7 @@ func TestTheoShape_GenerateName(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Create: %v", err)
 	}
-	// Server should have minted a name like "theo-build-XXXX-<random>".
+	// Server should have minted a name like "loopzero-build-XXXX-<random>".
 	if !strings.HasPrefix(created.Metadata.Name, prefix) {
 		t.Fatalf("server-minted name %q does not start with %q",
 			created.Metadata.Name, prefix)
@@ -206,11 +206,11 @@ func TestTheoShape_GenerateName(t *testing.T) {
 	_ = waitWorkflowSucceeded(t, created.Metadata.Name, defaultWaitTimeout)
 }
 
-// TestTheoShape_AffinityPreservedAcrossSerialize is a regression guard
+// TestLoopZeroShape_AffinityPreservedAcrossSerialize is a regression guard
 // against losing the default podAffinity when the workflow goes through
-// ToYAML → FromYAML (the path Theo uses when serializing for the
+// ToYAML → FromYAML (the path LoopZero uses when serializing for the
 // dynamic client via ToDict).
-func TestTheoShape_AffinityPreservedAcrossSerialize(t *testing.T) {
+func TestLoopZeroShape_AffinityPreservedAcrossSerialize(t *testing.T) {
 	w := &forge.Workflow{
 		Name:       "irrelevant",
 		Entrypoint: "main",
@@ -231,7 +231,7 @@ func TestTheoShape_AffinityPreservedAcrossSerialize(t *testing.T) {
 		t.Fatalf("Build did not inject affinity for PVC workflow")
 	}
 
-	// Theo's ToDict path: marshal to JSON, hand to dynamic client. We
+	// LoopZero's ToDict path: marshal to JSON, hand to dynamic client. We
 	// emulate by JSON round-tripping the whole WorkflowModel.
 	raw, err := json.Marshal(wf)
 	if err != nil {

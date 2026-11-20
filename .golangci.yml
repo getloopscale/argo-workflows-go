@@ -1,4 +1,4 @@
-# golangci-lint v2 — strict quality-gate configuration for theo-forge.
+# golangci-lint v2 — strict quality-gate configuration for loopzero-forge.
 #
 # Authority:
 #   - .claude/rules/golang-conventions.md §Forbidden patterns
@@ -136,7 +136,7 @@ linters:
         no-k8s-deps:
           deny:
             - pkg: "k8s.io/api"
-              desc: "theo-forge mirrors the Argo CRD schema in model/ to avoid the k8s.io transitive tree (~50 MiB). See .claude/rules/dependencies.md."
+              desc: "loopzero-forge mirrors the Argo CRD schema in model/ to avoid the k8s.io transitive tree (~50 MiB). See .claude/rules/dependencies.md."
             - pkg: "k8s.io/apimachinery"
               desc: "Same as k8s.io/api — local mirroring in model/."
             - pkg: "k8s.io/client-go"
@@ -144,9 +144,9 @@ linters:
 
     importas:
       alias:
-        - pkg: github.com/usetheodev/theo-forge
+        - pkg: github.com/getloopscale/argo-workflows-go
           alias: forge
-        - pkg: github.com/usetheodev/theo-forge/model
+        - pkg: github.com/getloopscale/argo-workflows-go/model
           alias: model
 
     exhaustive:
@@ -245,7 +245,7 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/usetheodev/theo-forge
+        - github.com/getloopscale/argo-workflows-go
     gofmt:
       simplify: true
 

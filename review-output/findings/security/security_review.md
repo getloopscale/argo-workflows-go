@@ -1,7 +1,7 @@
 # Security Review — Phase 6
 **Date:** 2026-05-20
 **Reviewer:** security-auditor
-**Scope:** Go SDK (github.com/usetheodev/theo-forge) — not a deployed service
+**Scope:** Go SDK (github.com/getloopscale/argo-workflows-go) — not a deployed service
 
 ---
 

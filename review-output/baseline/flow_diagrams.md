@@ -1,4 +1,4 @@
-# Flow Diagrams — theo-forge
+# Flow Diagrams — loopzero-forge
 
 Generated: Phase 1, Iteration 1 (2026-05-20)
 

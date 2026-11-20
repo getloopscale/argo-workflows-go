@@ -11,12 +11,12 @@ import (
 	"testing"
 	"time"
 
-	forge "github.com/usetheodev/theo-forge"
-	"github.com/usetheodev/theo-forge/model"
+	forge "github.com/getloopscale/argo-workflows-go"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
-// TestTheoShape_ToDictDynamicSubmitPath exercises the EXACT submission
-// path Theo uses in production (api/internal/argo/workflow_submitter.go
+// TestLoopZeroShape_ToDictDynamicSubmitPath exercises the EXACT submission
+// path LoopZero uses in production (api/internal/argo/workflow_submitter.go
 // ~L140 Submit):
 //
 //	wfObject, _ := wf.ToDict()
@@ -26,14 +26,14 @@ import (
 // Our previous E2E tests submit via CreateWorkflowFromModel (REST). If
 // forge.Workflow.ToDict() ever stops producing a map[string]interface{}
 // that the apiserver accepts as an Unstructured Workflow CR, EVERY
-// Theo build breaks but our REST-only tests pass green. This test
+// LoopZero build breaks but our REST-only tests pass green. This test
 // closes that gap.
 //
 // We can't import k8s.io/client-go/dynamic here (depguard policy), so
 // we reproduce the path with `kubectl apply -f` of the JSON we get
 // out of ToDict. The apiserver validation is identical: SSA accepts
 // the same shape Unstructured.Create posts.
-func TestTheoShape_ToDictDynamicSubmitPath(t *testing.T) {
+func TestLoopZeroShape_ToDictDynamicSubmitPath(t *testing.T) {
 	wfName := uniqueName("todict")
 	cleanupWorkflow(t, wfName)
 
@@ -54,7 +54,7 @@ func TestTheoShape_ToDictDynamicSubmitPath(t *testing.T) {
 		},
 	}
 
-	// Theo's exact path: ToDict → marshal to JSON → apply via dynamic client.
+	// LoopZero's exact path: ToDict → marshal to JSON → apply via dynamic client.
 	// We marshal to JSON and `kubectl apply -f` which is byte-equivalent.
 	wfDict, err := w.ToDict()
 	if err != nil {
@@ -78,8 +78,8 @@ func TestTheoShape_ToDictDynamicSubmitPath(t *testing.T) {
 	_ = waitWorkflowSucceeded(t, wfName, defaultWaitTimeout)
 }
 
-// TestTheoShape_ConcurrentSubmits proves the SDK is safe under the
-// concurrency Theo Cloud hits in production. Theo's BuildReconcileLoop
+// TestLoopZeroShape_ConcurrentSubmits proves the SDK is safe under the
+// concurrency LoopZero Cloud hits in production. LoopZero's BuildReconcileLoop
 // + parallel deploy events can submit N workflows simultaneously
 // against the SAME WorkflowsService instance. Any race in:
 //
@@ -91,7 +91,7 @@ func TestTheoShape_ToDictDynamicSubmitPath(t *testing.T) {
 //
 // We submit N workflows in parallel goroutines, wait for ALL to
 // reach Succeeded, and assert every error path is empty.
-func TestTheoShape_ConcurrentSubmits(t *testing.T) {
+func TestLoopZeroShape_ConcurrentSubmits(t *testing.T) {
 	const n = 5 // keep modest — every workflow pulls alpine + starts a pod
 	svc := argoClient(t)
 
@@ -145,7 +145,7 @@ func TestTheoShape_ConcurrentSubmits(t *testing.T) {
 	}
 }
 
-// TestTheoShape_ShutdownPatch_Cancel replicates Theo's Cancel path
+// TestLoopZeroShape_ShutdownPatch_Cancel replicates LoopZero's Cancel path
 // (api/internal/argo/workflow_submitter.go ~L187 Cancel):
 //
 //	patch := {"apiVersion":"argoproj.io/v1alpha1","kind":"Workflow",
@@ -153,7 +153,7 @@ func TestTheoShape_ConcurrentSubmits(t *testing.T) {
 //	client.Resource(workflowGVR).Namespace(ns).Patch(
 //	    ctx, workflowID, "application/merge-patch+json", patch, ...)
 //
-// Theo issues this merge-patch directly via dynamic client. The forge
+// LoopZero issues this merge-patch directly via dynamic client. The forge
 // REST client has StopWorkflow which is functionally equivalent but
 // hits a DIFFERENT server endpoint (/api/v1/workflows/.../stop vs raw
 // CRD patch). We test the raw-patch path here.
@@ -161,7 +161,7 @@ func TestTheoShape_ConcurrentSubmits(t *testing.T) {
 // Submit a slow workflow → patch shutdown=Stop → wait terminal phase.
 // The workflow MUST end in a non-Succeeded terminal phase (Failed
 // or Terminated) within the test timeout.
-func TestTheoShape_ShutdownPatch_Cancel(t *testing.T) {
+func TestLoopZeroShape_ShutdownPatch_Cancel(t *testing.T) {
 	wfName := uniqueName("cancel")
 	cleanupWorkflow(t, wfName)
 
@@ -200,7 +200,7 @@ func TestTheoShape_ShutdownPatch_Cancel(t *testing.T) {
 		time.Sleep(2 * time.Second)
 	}
 
-	// Patch shutdown=Stop EXACTLY as Theo does.
+	// Patch shutdown=Stop EXACTLY as LoopZero does.
 	patchJSON := `{"apiVersion":"argoproj.io/v1alpha1","kind":"Workflow","spec":{"shutdown":"Stop"}}`
 	kubectl(t, "-n", "argo", "patch", "wf", wfName,
 		"--type=merge", "-p", patchJSON)
@@ -225,15 +225,15 @@ func TestTheoShape_ShutdownPatch_Cancel(t *testing.T) {
 		wfName, dumpWorkflow(t, wfName))
 }
 
-// TestTheoShape_BackwardCompat_v3DAG_OnV4 is a compat probe: a workflow
+// TestLoopZeroShape_BackwardCompat_v3DAG_OnV4 is a compat probe: a workflow
 // shape that was authored against Argo v3 (the version forge originally
-// pinned) MUST still apply cleanly on Argo v4 (Theo Cloud prod).
+// pinned) MUST still apply cleanly on Argo v4 (LoopZero Cloud prod).
 //
 // We construct a workflow that uses ONLY fields present in v3.x spec
 // (no v4-only additions) and assert v4 accepts + runs it. This guards
 // against the SDK silently emitting v4-only field names that would
 // break consumers still on v3.
-func TestTheoShape_BackwardCompat_v3DAG_OnV4(t *testing.T) {
+func TestLoopZeroShape_BackwardCompat_v3DAG_OnV4(t *testing.T) {
 	wfName := uniqueName("v3-on-v4")
 	cleanupWorkflow(t, wfName)
 

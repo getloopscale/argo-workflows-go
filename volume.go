@@ -3,7 +3,7 @@ package forge
 import (
 	"fmt"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // VolumeBuilder is implemented by types that can build a VolumeModel.
@@ -247,7 +247,7 @@ func (v NFSVolume) BuildVolume() (model.VolumeModel, error) {
 // ProjectedVolume is a volume that aggregates multiple sources (ServiceAccountToken,
 // ConfigMap, Secret, DownwardAPI) into a single mount point.
 //
-// Primary use case in Theo: Sigstore cosign keyless OIDC signing.
+// Primary use case in LoopZero: Sigstore cosign keyless OIDC signing.
 // Each build worker pod mounts a SA token with audience="sigstore" so cosign
 // can present it to Fulcio for short-lived signing certificate issuance,
 // instead of using a long-lived static key.

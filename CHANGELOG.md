@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Changed
-- The minimum Go version is now 1.26.10, up from 1.25.10. Go 1.25.14, the last 1.25 release, still carries 10 standard library vulnerabilities reachable from theo-forge, and their fixes only exist from 1.26.10. (#26)
+- **BREAKING: the module path is now `github.com/getloopscale/argo-workflows-go`.** It matches the repository that hosts the module. Consumers change their import paths and their `require` line.
+- The minimum Go version is now 1.26.10, up from 1.25.10. Go 1.25.14, the last 1.25 release, still carries 10 standard library vulnerabilities reachable from loopzero-forge, and their fixes only exist from 1.26.10. (#26)
 
 ## [0.7.0] - 2026-11-06
 
@@ -31,8 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - Abrir um PR não dispara mais esteira: o gatilho `pull_request` foi removido do único workflow que o declarava (`ci.yml`). CI passa a rodar **somente no merge** — push em `develop`/`main` — por decisão do dono (2026-08-12). A cobertura no merge não se perde: o mesmo workflow já disparava em `push`, que foi mantido intacto. Se este repositório tiver *required status checks* configurados no GitHub para PRs, eles precisam ser removidos lá, senão o PR fica travado esperando um check que nunca reporta.
-- License standardized to **Apache-2.0** (was MIT). Aligns all Theo open-core pillars under a single license — see root `CLAUDE.md` strategic review of 2026-05-14.
-- License standardized to **Apache-2.0** (was MIT). Aligns all usetheo open-core pillars under a single license — see root `CLAUDE.md` strategic review of 2026-05-14.
+- License standardized to **Apache-2.0** (was MIT). Aligns all LoopZero open-core pillars under a single license — see root `CLAUDE.md` strategic review of 2026-05-14.
+- License standardized to **Apache-2.0** (was MIT). Aligns all loopzero open-core pillars under a single license — see root `CLAUDE.md` strategic review of 2026-05-14.
 - **BREAKING (behavior):** `expr.C` and string-interpolation methods (`Contains`, `Matches`, `StartsWith`, `EndsWith`, `Sprig.{Trim,Upper,Lower,Replace}`) now escape single quotes for safe Argo embedding. Callers that pre-escaped input must switch to `expr.RawC` to avoid double-escaping (#T2.2, SEC-002, EC-4).
 - `client.WorkflowsService.VerifySSL` now actually controls TLS verification on the HTTP transport (was a dead field). `MinVersion` fixed to TLS 1.2. Externally-set `HTTPClient` is honored without overwrite (#T2.4, SEC-004, code-p4-verifyssl-dead, EC-5).
 - `client` HTTP body reads bounded to 32 MiB to prevent memory exhaustion (`ErrResponseTooLarge`) (#T2.5, SEC-005).

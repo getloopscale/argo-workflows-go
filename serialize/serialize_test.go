@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // TestSerialize_Smoke confirms WorkflowToYAML round-trips a zero-value WorkflowModel

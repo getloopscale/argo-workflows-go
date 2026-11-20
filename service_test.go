@@ -11,8 +11,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/client"
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/client"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // mockHTTPClient is a mock HTTP client for testing.

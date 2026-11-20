@@ -1,4 +1,4 @@
-# Component Inventory — theo-forge
+# Component Inventory — loopzero-forge
 
 Generated: Phase 1, Iteration 1 (2026-05-20)
 

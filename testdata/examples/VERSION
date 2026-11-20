@@ -12,7 +12,7 @@ LAST_SYNCED=2026-05-20
 #   https://github.com/argoproj/argo-workflows/blob/v3.5.10/examples/<basename>
 #
 # Local additions (NOT from upstream) — produced by Hera or by hand to
-# exercise theo-forge-specific code paths. Listed so re-sync scripts
+# exercise loopzero-forge-specific code paths. Listed so re-sync scripts
 # do not accidentally overwrite them.
 LOCAL_ADDITIONS=
   # (none yet)

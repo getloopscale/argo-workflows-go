@@ -1,4 +1,4 @@
-// Package e2e holds end-to-end tests for the theo-forge SDK.
+// Package e2e holds end-to-end tests for the loopzero-forge SDK.
 //
 // These tests submit workflows to a REAL Argo Workflows control plane
 // (running on a local kind cluster bootstrapped by `make e2e-up`) and

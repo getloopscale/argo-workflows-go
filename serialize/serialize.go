@@ -11,7 +11,7 @@ import (
 
 	"sigs.k8s.io/yaml"
 
-	"github.com/usetheodev/theo-forge/model"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
 // WorkflowToYAML converts a WorkflowModel to a YAML string.

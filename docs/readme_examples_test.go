@@ -14,10 +14,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	forge "github.com/usetheodev/theo-forge"
-	"github.com/usetheodev/theo-forge/client"
-	"github.com/usetheodev/theo-forge/config"
-	"github.com/usetheodev/theo-forge/expr"
+	forge "github.com/getloopscale/argo-workflows-go"
+	"github.com/getloopscale/argo-workflows-go/client"
+	"github.com/getloopscale/argo-workflows-go/config"
+	"github.com/getloopscale/argo-workflows-go/expr"
 )
 
 // resetGlobalConfig is a local wrapper around config.ResetGlobalConfigForTest

@@ -1,4 +1,4 @@
-# theo-forge — Makefile
+# loopzero-forge — Makefile
 #
 # Single source of truth for local + CI verification. CI workflows in
 # .github/workflows/ delegate to `make verify` rather than re-defining

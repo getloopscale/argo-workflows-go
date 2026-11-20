@@ -1,6 +1,6 @@
 package forge
 
-import "github.com/usetheodev/theo-forge/config"
+import "github.com/getloopscale/argo-workflows-go/config"
 
 // T4.2 — config wiring split from helpers.go. ADR-001 lives here.
 

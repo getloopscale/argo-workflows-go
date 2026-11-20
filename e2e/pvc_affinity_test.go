@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	forge "github.com/usetheodev/theo-forge"
+	forge "github.com/getloopscale/argo-workflows-go"
 )
 
 // TestE2E_PVCDefaultPodAffinity is the live proof for the v0.4.0

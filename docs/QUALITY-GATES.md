@@ -1,4 +1,4 @@
-# Quality Gates — theo-forge
+# Quality Gates — loopzero-forge
 
 **Authority:** this document is the single contract for what "passing CI"
 means. The Makefile mechanizes it; `.golangci.yml` and `.testcoverage.yml`

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/usetheodev/theo-forge/client"
-	"github.com/usetheodev/theo-forge/expr"
+	"github.com/getloopscale/argo-workflows-go/client"
+	"github.com/getloopscale/argo-workflows-go/expr"
 )
 
 // --- File I/O tests (consolidated from file_io_test.go) ---

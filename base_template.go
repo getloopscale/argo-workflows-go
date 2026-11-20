@@ -1,6 +1,6 @@
 package forge
 
-import "github.com/usetheodev/theo-forge/model"
+import "github.com/getloopscale/argo-workflows-go/model"
 
 // sharedTemplateFields captures the ~17 fields that Container and Script
 // historically duplicated. Used internally by BuildTemplate methods to

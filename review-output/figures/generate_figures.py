@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate SVG figures for the theo-forge deep review report."""
+"""Generate SVG figures for the loopzero-forge deep review report."""
 import math
 from pathlib import Path
 

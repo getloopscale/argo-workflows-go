@@ -7,23 +7,23 @@ import (
 	"strings"
 	"testing"
 
-	forge "github.com/usetheodev/theo-forge"
-	"github.com/usetheodev/theo-forge/model"
+	forge "github.com/getloopscale/argo-workflows-go"
+	"github.com/getloopscale/argo-workflows-go/model"
 )
 
-// TestTheoShape_OnExitFiresAfterSuccess proves that OnExit DAGs run
-// after the main entrypoint completes — Theo uses this for cleanup +
+// TestLoopZeroShape_OnExitFiresAfterSuccess proves that OnExit DAGs run
+// after the main entrypoint completes — LoopZero uses this for cleanup +
 // status notifications.
 //
-// Theo's pattern (workflow_builder.go ~L296):
+// LoopZero's pattern (workflow_builder.go ~L296):
 //
 //	wf.Entrypoint = "main"
 //	wf.OnExit     = "cleanup"
 //	Templates contain both DAGs.
 //
-// If the OnExit handler regresses, every Theo build leaks pods + never
+// If the OnExit handler regresses, every LoopZero build leaks pods + never
 // signals completion to the reconcile loop.
-func TestTheoShape_OnExitFiresAfterSuccess(t *testing.T) {
+func TestLoopZeroShape_OnExitFiresAfterSuccess(t *testing.T) {
 	wfName := uniqueName("onexit-ok")
 	cleanupWorkflow(t, wfName)
 
@@ -74,9 +74,9 @@ func TestTheoShape_OnExitFiresAfterSuccess(t *testing.T) {
 	}
 }
 
-// TestTheoShape_StatusOutputsExtractable mirrors Theo's
+// TestLoopZeroShape_StatusOutputsExtractable mirrors LoopZero's
 // extractStepOutputs (api/internal/argo/workflow_submitter.go ~L282).
-// Theo reads outputs at:
+// LoopZero reads outputs at:
 //
 //	status.nodes[<nodeId>].outputs.parameters[]
 //
@@ -91,15 +91,15 @@ func TestTheoShape_OnExitFiresAfterSuccess(t *testing.T) {
 //  3. Reads the workflow back AFTER Succeeded and walks status.nodes[*]
 //     EXACTLY as extractStepOutputs does
 //  4. Asserts the displayName-keyed output map has the expected value
-func TestTheoShape_StatusOutputsExtractable(t *testing.T) {
+func TestLoopZeroShape_StatusOutputsExtractable(t *testing.T) {
 	wfName := uniqueName("outputs")
 	cleanupWorkflow(t, wfName)
 
-	const expectedValue = "theo-output-marker-42"
+	const expectedValue = "loopzero-output-marker-42"
 
-	// Theo wraps every step in a DAG so node displayName == task name
+	// LoopZero wraps every step in a DAG so node displayName == task name
 	// (single-template workflows name the node after the workflow itself,
-	// which is not how Theo consumes outputs). Mirror the Theo pattern.
+	// which is not how LoopZero consumes outputs). Mirror the LoopZero pattern.
 	w := &forge.Workflow{
 		Name:       wfName,
 		Entrypoint: "main",
@@ -135,9 +135,9 @@ func TestTheoShape_StatusOutputsExtractable(t *testing.T) {
 	}
 	final := waitWorkflowSucceeded(t, wfName, defaultWaitTimeout)
 
-	// --- Mirror Theo's extractStepOutputs walk ---
-	// We use the REST client's typed Status here; Theo uses dynamic
-	// client + ParseWorkflowStatusFromUnstructured. Theo-4 covers the
+	// --- Mirror LoopZero's extractStepOutputs walk ---
+	// We use the REST client's typed Status here; LoopZero uses dynamic
+	// client + ParseWorkflowStatusFromUnstructured. LoopZero-4 covers the
 	// dynamic-client path; here we prove the OUTPUT WALK works regardless.
 	if final.Status == nil || final.Status.Nodes == nil {
 		t.Fatalf("Status.Nodes is empty — controller did not record per-node status\n%s",

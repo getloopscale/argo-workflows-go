@@ -1,4 +1,4 @@
-# Risk Hypotheses — theo-forge
+# Risk Hypotheses — loopzero-forge
 
 Generated: Phase 1, Iteration 1 (2026-05-20)
 

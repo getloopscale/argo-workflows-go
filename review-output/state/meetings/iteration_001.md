@@ -12,9 +12,9 @@
 
 ## Project Context Summary
 
-**theo-forge** is a pure Go library SDK (v0.4.0) for building Argo Workflows CRDs programmatically. It is the Go equivalent of the Hera Python SDK. There is NO server, NO runtime, NO database — the output artifact is Argo Workflow YAML/JSON for submission to a Kubernetes cluster running Argo Workflows.
+**loopzero-forge** is a pure Go library SDK (v0.4.0) for building Argo Workflows CRDs programmatically. It is the Go equivalent of the Hera Python SDK. There is NO server, NO runtime, NO database — the output artifact is Argo Workflow YAML/JSON for submission to a Kubernetes cluster running Argo Workflows.
 
-- Module: `github.com/usetheodev/theo-forge`
+- Module: `github.com/getloopscale/argo-workflows-go`
 - Go version: 1.25
 - Single external runtime dependency: `sigs.k8s.io/yaml v1.6.0`
 - CI: GitHub Actions with test (race), vet, golangci-lint, govulncheck, gosec
