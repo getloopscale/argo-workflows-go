@@ -39,7 +39,7 @@ Define workflows as Go structs, get compile-time safety, and let Forge handle th
 go get github.com/getloopscale/argo-workflows-go
 ```
 
-Requires **Go 1.26.10+**.
+Requires **Go 1.26.11+**.
 
 ## Quick Start
 
